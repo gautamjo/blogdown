@@ -1,4 +1,4 @@
-baseurl =  "/"
+baseurl =  "https://gigaelectron.github.io/blogdown-hugo-website/"
 languageCode = "en-us"
 title = "Hello there!"
 theme = "hugo-lithium-theme"
@@ -21,7 +21,7 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
     url = "https://twitter.com/rstudio"
 
 [params]
-    description = "My sample website."
+    description = "Gautam's website."
 
     # options for highlight.js (version, additional languages, and theme)
     highlightjsVersion = "9.11.0"

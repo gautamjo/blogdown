@@ -1,0 +1,1669 @@
+---
+title: Understanding Movies through Data
+author: Gautam Joshi
+date: '2017-10-05'
+categories:
+  - Data Science
+tags:
+  - Movies, data science, imdb.com, kaggle.com
+draft: no
+slug: new-post
+image: img/portfolio/movie_library.jpeg
+weight: 1
+output:
+  html_document: default
+---
+
+<body style = "font-family:Georgia">
+###<span style = "color:olive">Prelude:</span>### 
+What makes movies good or bad? Is it our emotional response towards them? Is it the critical reviews or the scores? Is it the association of popular directors or actors? Is it the amount they gross at the box office? What is it really that describes their success or failure? I have pondered over such questions many a times but never really got around to acknowledge them. Thus, when this project came along, I used it as an opportunity to try to find some answers this time around.<br>
+
+Understanding movies through data, as the name suggests, was an endeavour towards performing exploratory data analyis on a movie related dataset. My intentions behind this exploration were to simply study a dataset that could provide some insight into movies, its audiences and to an extent its economics. In search of a dataset I turned to <a href = "https://www.kaggle.com" target = "_blank"> www.kaggle.com </a> where I stumbled upon one that nicely fitted my needs. This fantastic dataset was created by chuansun76. It contained data from 5043 movies spread across 28 features scraped from <a href = "https://www.imdb.com" target = "_blank">www.imdb.com</a>. Using this dataset as a base of my study I began my quest to understand movies through data.   
+
+Below is a complete list of features found in the dataset and <a href = "https://www.kaggle.com/deepmatrix/imdb-5000-movie-dataset" target = "_blank">here</a> is a link for reference:<br>  
+<ul>
+<li><span style = "color:cadetblue">movie_title:</span> Contains title of a movie</li>   
+<li><span style = "color:cadetblue">color:</span> Specifies whether a movie is black and white or color</li>  
+<li><span style = "color:cadetblue">num_critic_for_reviews:</span> Contains number of critic reviews per movie</li>  
+<li><span style = "color:cadetblue">movie_facebook_likes:</span> Contains number of facebook likes per movie</li>  
+<li><span style = "color:cadetblue">duration:</span> Contains duration of a movie in minutes</li>  
+<li><span style = "color:cadetblue">director_name:</span> Contains name of the director of a movie</li>  
+<li><span style = "color:cadetblue">director_facebook_likes:</span> Contains number of facebook likes for a director</li>  
+<li><span style = "color:cadetblue">actor_3_name:</span> Contains the name of the 3rd leading actor of a movie</li>  
+<li><span style = "color:cadetblue">actor_3_facebook_likes:</span> Contains number of facebook likes for actor 3</li>   
+<li><span style = "color:cadetblue">actor_2_name:</span> Contains name of 2nd leading actor of a movie</li>  
+<li><span style = "color:cadetblue">actor_2_facebook_likes:</span> Contains number of facebook likes for actor 2</li>   
+<li><span style = "color:cadetblue">actor_1_name:</span> Contains name of the actor in lead role</li>  
+<li><span style = "color:cadetblue">actor_1_facebook_likes:</span> Contains number of facebook likes for actor 1</li>   
+<li><span style = "color:cadetblue">gross:</span> Contains the amount a movie grossed in USD</li>   
+<li><span style = "color:cadetblue">genres:</span> Contains the sub-genres to which a movie belongs</li>  
+<li><span style = "color:cadetblue">num_voted_users:</span> Contains number of users votes for a movie</li>  
+<li><span style = "color:cadetblue">cast_total_facebook_likes:</span> Contains number of facebook likes for the entire cast of a movie</li>
+<li><span style = "color:cadetblue">facenumber_in_poster:</span> Contains number of actor's faces on a movie poster</li>  
+<li><span style = "color:cadetblue">plot_keywords:</span> Contains key plot words associated with a movie</li>  
+<li><span style = "color:cadetblue">movie_imdb_link:</span> Contains the link to the imdb movie page</li>  
+<li><span style = "color:cadetblue">num_user_for_reviews:</span> Contains the number of user generated reviews per movie</li>  
+<li><span style = "color:cadetblue">language:</span> Contains the language of a movie</li>  
+<li><span style = "color:cadetblue">country:</span> Contains the name of the country in which a movie was made</li>   
+<li><span style = "color:cadetblue">content_rating:</span> Contains maturity rating of a movie</li>  
+<li><span style = "color:cadetblue">budget:</span> Contains the amount of money spent in production per movie (not always in USD)</li>  
+<li><span style = "color:cadetblue">title_year:</span> Contains the year in which a film was released</li>   
+<li><span style = "color:cadetblue">imdb_score:</span> Contains user generated rating per movie</li>  
+<li><span style = "color:cadetblue">aspect_ratio:</span> Contains the size of the aspect ratio of a movie</li>  
+</ul>
+
+###<span style = "color:olive">Purpose:</span>###  
+The objective of this study was to attempt to observe general movie trends by examing factors like movie genres, user rating, production costs or box office earnings. So I focused primarily on three main features that could allow to me do so. I began the analysis by examining movies through genres, gradually shifting focus to year of release and finally to commercial failure or success. My idea was not to provide a comprehensive analysis rather to simply experiment with the dataset and discover things as I went along. 
+
+
+###<span style = "color:olive">Setup:</span>###  
+Movies are chiefly categorised into 17 main genres: Action, Adventure, Fantasy, Comedy, Crime, Drama, Mystery, Romance, Horror, Thriller, Sci-Fi, Epics, Musical, Western, Animation, Biography and Documentary. IMDB however, categorises movies into sub genres. To be precise, the dataset contained 914 sub genres. Examining such vastly diverse set of data points individually would have taken forever. Hence, I decided I should simplify the domain of my study.   
+
+My first response towards simplifying the area of my research was to tidy the data. I Removed duplicates, blank items and NA values which reduced the data to 3739 observations out of the 5043 observation that were originally there. The second decision was to engineer new features from the available feature set in the data.   
+
+I created a new feature named 'sub_genres' to which I assigned all the values of the feature 'genres'. I nullified 'genres' and then assigned new values to it. These values where the first word extracted from 'sub_genres'. For example, if the sub genre is 'Action|Crime| Thriller', the first word 'Action' was the genre of the film.     
+
+Other features that were created were explained as and when they were used during the course of this project.
+     
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = F, message = F)
+```
+
+
+```{r}
+# libraries needed
+library(tidyverse)
+library(plotly)
+library(formattable)
+library(RColorBrewer)
+library(stringr)
+library(DT)
+```
+
+
+```{r}
+# set directory
+setwd("/Users/gautamjoshi/Desktop/R_std")
+# load data
+mdata <- read.csv("movie_metadata.csv")
+```
+
+
+```{r echo=T}  
+
+# remove duplicates if any
+mdata <- mdata[!duplicated(mdata), ]
+
+# removing na values
+mdata <- na.omit(mdata)
+
+# removing blank fields
+mdata <- mdata[which(!(mdata$director_name == "" | mdata$color == "" | mdata$language == "" | mdata$content_rating == "" 
+                       | mdata$plot_keywords == "")),]
+
+# fixing movie names
+mdata$imdb_score <- gsub("Â", "", mdata$imdb_score)
+
+# extracting genres from sub genres
+mdata$sub_genres <- mdata$genres 
+mdata$genres <- NULL
+mdata$genres <- factor(str_extract(mdata$sub_genres, pattern = "^[a-zA-Z]*"))
+
+# creating a new feature called total_facebook_likes
+mdata$total_facebook_likes <- mdata$director_facebook_likes + 
+  mdata$actor_3_facebook_likes + mdata$actor_1_facebook_likes +
+  mdata$cast_total_facebook_likes + mdata$actor_2_facebook_likes
+
+# converting imdb_score to numeric feature
+mdata$imdb_score <- as.numeric(mdata$imdb_score)
+
+# creating feature return_on_investment
+mdata$budget <- mdata$budget/1000000
+mdata$gross <- mdata$gross/1000000
+mdata$return_on_investment <- (mdata$gross - mdata$budget)/mdata$budget
+mdata$profit_loss <- ifelse(mdata$return_on_investment > 0, 1, 0)  
+
+```  
+
+  
+  
+After tidying and updating the dataset this was how the new feature set looked like:   
+
+
+
+```{r}  
+  
+# checking dimensions
+d <- dim(mdata)
+cat(d[1], "Items\n", d[2], "Fields")
+cat("\n\n")
+cat("Updated feature set:\n")
+# checking categorical and quantitive features
+var_type <- split(names(mdata), sapply(mdata, function(x) paste(class(x), collapse = " ")))
+var_type  
+
+```  
+  
+
+Structure:  
+
+  
+```{r}  
+ 
+str(mdata)  
+
+```  
+
+
+Sample Data:  
+
+
+```{r}  
+  
+df <- mdata %>%
+  head(20) %>%
+  formattable(align = "l") %>%
+  as.datatable(options = list(scrollX = TRUE))
+df
+```  
+
+
+I set up some custom plot functions and plot styles for later use.  
+
+
+```{r, echo=T}  
+  
+# setting up plotly label, axis and text customizations
+f1 <- list(
+  family = "Old Standard TT, serif",
+  size = 14,
+  color = "grey"
+)
+f2 <- list(
+  family = "Old Standard TT, serif",
+  size = 10,
+  color = "black"
+)
+a <- list(
+  titlefont = f1,
+  showticklabels = T,
+  tickangle = -45,
+  tickfont = f2
+)
+
+m <- list(
+  l = 50,
+  r = 50,
+  b = 100,
+  t = 100,
+  pad = 4
+)
+
+# annotations for subplot
+a1 <- list(x = 0.5, y = 1.0,
+          showarrow = FALSE, 
+          text = "Distribution of bugdet", 
+          xanchor = "center", 
+          xref = "paper", 
+          yanchor = "bottom", 
+          yref = "paper", 
+          font = f1)
+  
+b1 <- list(x = 0.5, y = 1.0, 
+           showarrow = FALSE, 
+           text = "Distribution of gross", 
+           xanchor = "center", 
+           xref = "paper", 
+           yanchor = "bottom", 
+           yref = "paper",
+           font = f1)
+
+
+# creating a function called scatter_plot for
+# plotting scatter plots using ggplot and plotly
+
+scatter_plot <- function(x, y, xlabel, ylabel, title,
+                         text1, text2, text3,
+                         alpha = NULL){
+  if(is.null(alpha)) alpha <- 0.4
+  gp <- ggplot(data = mdata, mapping = aes(x = x, y = y,
+                                          text = paste(text1, x,
+                                                       text2, y,
+                                                       text3, movie_title)))
+  plot <- gp + geom_point(position = "jitter", 
+                          show.legend = F, shape = 21, 
+                          stroke = .2, alpha = alpha) + 
+    xlab(xlabel) +
+    ylab(ylabel) +
+    ggtitle(title) +
+    theme_minimal() +
+    theme(legend.position = "none",
+          plot.title = element_text(size = 12, face = "bold", 
+                                    family = "Times", 
+                                    color = "darkgrey")) 
+  
+  ggplotly(plot, tooltip = "text") %>%
+    layout(m, xaxis = a, yaxis = a)
+}
+
+# creating function for plotting scatter plot using facet wrap
+facet_plot <- function(x, y, xlabel, ylabel, alpha = NULL){
+   if(is.null(alpha)) alpha <- 1
+  
+  fp <- ggplot(data = mdata, mapping = aes(x = x, y = y))
+  fp + geom_point(aes(fill = genres), position = "jitter", 
+                  show.legend = F, shape = 21,
+                  stroke = 0.2, alpha = alpha) +
+    xlab(xlabel) +
+    ylab(ylabel) +
+    facet_wrap(~genres, scales = "free") +
+    theme_minimal()
+}
+
+# creating a function for plotting a simple histogram
+hist_plot <- function(x, xlabel, bwidth, fill = NULL, color = NULL){
+  if(is.null(fill)) fill <- "orange"
+  if(is.null(color)) color <- "black"
+  hp <- ggplot(data = mdata, mapping = aes(x = x))
+  gp <- hp + geom_histogram(binwidth = bwidth, fill = fill, 
+                            color = color, 
+                            size = 0.2,
+                            alpha = 0.7,
+                            show.legend = F) +
+    xlab(xlabel) +
+    theme_minimal()
+  
+  ggplotly(gp) %>%
+    layout(margin = m, xaxis = a, yaxis = a)
+}
+
+# creating a function for plotting histogram using facet wrap
+facet_hist_plot <- function(x, xlabel, bwidth){
+  
+  hp <- ggplot(data = mdata, mapping = aes(x = x))
+  hp + geom_histogram(aes(fill = genres), binwidth = bwidth,
+                      show.legend = F, 
+                      color = "black", size = 0.2, 
+                      alpha = 0.8) +
+    xlab(xlabel) +
+    theme_minimal() +
+    theme(legend.position = "none",
+          axis.text = element_text(size = 12, angle = 20),
+          axis.title = element_text(size = 14, 
+                                    family = "Times", 
+                                    color = "darkgrey",
+                                    face = "bold")) + 
+    facet_wrap(~ genres, scales = "free_y", ncol = 4)    
+  }
+
+
+# creating function for plotting histograms for budget and gross
+budg_gross_hist <- function(x){
+  
+  bh <- ggplot(mdata, aes(x = x))
+  bh + geom_histogram(binwidth = 0.05, 
+                      fill = sample(brewer.pal(11, "Spectral"), 1),
+                      color = "black", 
+                      size = 0.09,
+                      alpha = 0.7) + 
+    scale_x_log10() + 
+    theme_minimal()
+  
+  ggplotly() %>% 
+  layout(m, xaxis = a, yaxis = a) 
+}
+                           
+
+# creating a function for ploting bar graphs
+bar_plot <- function(data, x, y, info, xlabl, ylabl, title, 
+                      deci = NULL, suf = NULL){
+  if(is.null(suf)) suf <- ""
+  if(is.null(deci)) deci <- 0
+  b1 <- ggplot(data, aes(x = reorder(genres, x), 
+                               y = y, 
+                               text = paste("Genre:", genres,
+                                            info, 
+                                            round(y, deci), suf)))
+  
+  b1 + geom_bar(aes(fill = genres), stat = "identity", 
+           show.legend = F, color = "black", size = 0.2,
+           width = 0.7, alpha = 0.7) +
+  xlab(xlabl) +
+  ylab(ylabl) +
+  ggtitle(title) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        plot.title = element_text(size = 14, 
+                                  color = "grey", family = "Times")) +
+  scale_fill_brewer(palette = "Spectral")
+
+ggplotly(tooltip = "text") %>%
+  layout(margin = m, xaxis = a, yaxis = a)
+}
+
+
+# creating a function for plotting plotly line graph for title_year
+line_graph <- function(data, y, name){
+ 
+  scat_p1 <- plot_ly(data, x = ~title_year, y = ~ y, 
+             name = name, type = 'scatter', mode = 'lines',
+             line = list(color = sample(brewer.pal(11, "Spectral"), 1))) %>%
+  layout(xaxis = list(title = "Title Year", zeroline = F,
+                      showline = F, 
+                      showticklabels = T),
+         yaxis = list(title = "Average Score"),
+         title = "Line Graph for Avg Score/Avg Votes/Avg User Review by Title Year", 
+         font = list(family = "Serif", color = "grey"),
+         legend = list(orientation = "h", size = 6,
+                       bgcolor = "#E2E2E2",
+                       bordercolor = "darkgrey",
+                       borderwidth = 1),
+         margin = m)
+  scat_p1
+  }
+  
+
+```  
+
+
+<h3><span style = "color:olive">Act 1: Early Exploration</span></h3>  
+
+With this much simplified form of the data now available, I began asking some direct questions. One of the first things I wanted to know was <i><span style = "color:tomato">Which genre did most movies belonged to?</span></i> I thought an interactive donut chart would be a good way to visualize the count of movies per genre. I used the plotly library to make this work. 
+
+
+  
+```{r fig.height = 4, fig.width = 6, fig.align = "center"}
+# setting up color palette
+colors <- c(brewer.pal(n = 11, name = "Spectral"))
+
+# Plotting a donut chart by chaining commands together 
+mdata %>%
+  group_by(genres) %>%
+  summarise(count = n()) %>% 
+  arrange(desc(count)) %>%
+  head(10) %>%
+  plot_ly(labels = ~genres, values = ~count,
+          insidetextfont = list(color = 'Black'),
+          marker = list(colors = colors, 
+                        line = list(color = 'Black', width = .5)), 
+          opacity = 0.8) %>%
+  add_pie(hole = 0.6) %>%
+  layout(title = "Genre wise share of movies for top 10 genres", 
+         titlefont = list(family = "Times", size = 20, color = "grey"),
+         xaxis = list(showgrid = T, zeroline = F, showticklabels = F),
+         yaxis = list(showgrid = T, zeroline = F, showticklabels = F),
+         showlegend = F, 
+         margin = list(t = 50, b = 50))
+```
+
+
+Out of the 17 available genres in the dataset, Comedy topped the list with 26.7% share of movies falling in this category. Not too far behind with 25.8% share was Action. In the third spot was Drama with 17.9% share followed by Adventure with 9.93%, Crime with 6.87%, Biography with 5.54% and Horror with 4.32%. The last 3 genres Animation, Fantasy and Documentary each had less than 50 movies in their share. Mystery, Sci, Romance, Western, Thriller, Musical and Family genres were excluded from this count because they contained too few films.
+
+The next question I had in mind was <i><span style = "color:tomato">Which were the top rated genres?</span></i> Rating here can be expressed as a viewer's likeness towards a film, measured on a scale of 1 to 10. 1 being the lowest while 10 being the highest rating. I thought looking at the distribution of imdb scores would be a good way to start this investigation.
+
+
+```{r fig.height = 4, fig.width = 6, fig.align = "center"}
+# Distribution of imdb scores using a custom plot function
+hist_plot(mdata$imdb_score, bwidth = 0.1, 
+          "IMDB Score", 
+          fill = sample(brewer.pal(11, "Spectral"), 1),
+          color = "black") 
+```
+
+
+The distribution looked normal at first sight. However, more scores between 6.0 to 7.0 were skewing it slightly to the left. 6.7 was the most frequent score in the distribution observed 175 times. Taking a summary of imdb scores revealed that scores ranged between a minimum of 1.6 to a maximum of 9.3. The first quartile score was 5.9 and third quartile was 7.2. The mean imdb score was 6.5. Median score was 6.6.    
+
+The next graph I plotted was a genre wise distribution of scores.  
+
+
+```{r fig.height = 10, fig.width = 10, fig.align="center"}  
+
+# genre wise distribution of scores using a custom plot function  
+facet_hist_plot(mdata$imdb_score, 
+                bwidth = 0.1, 
+                "IMDB Score")+
+  scale_x_continuous(breaks = seq(0, 9.3, 1)) 
+```  
+
+
+
+The plot gave a pretty good view of how the scores were distributed across each individual genre. In general, all the distributions were skewing slightly to the left. But a few genres were skewed a tad bit more towards the left than others. For example, Action movies seemed to have a slighlty lesser skew compared to Drama or Biography. Checking the genre wise score summary indeed revealed that Action movies had a lower mean score compared to other two genres. This prompted me to compare distributions of these three genres seperately just to have a closer look at how they faired against each other. 
+
+
+
+```{r fig.height = 4, fig.width = 6, fig.align = "center"}  
+  
+# plotting frequency polygon comparing Action, Drama & Biography
+dr_ac_bio <- mdata%>%
+  filter(genres == "Action" | genres == "Drama" | genres == "Biography") %>%
+  ggplot(aes(x = imdb_score)) +
+  geom_freqpoly(aes(color = genres), binwidth = 0.1) +
+  theme_minimal() +
+  scale_color_manual(values = c(sample(brewer.pal(11, "Spectral")))) +
+  theme(axis.title.x = element_blank())
+
+ggplotly(dr_ac_bio) %>%
+  layout(margin = list(t = 50, b = 100), xaxis = a, yaxis = a, 
+         legend = list(orientation = "h", size = 4,
+                       bgcolor = "#E2E2E2",
+                       bordercolor = "darkgrey",
+                       borderwidth = 1,
+                       x = 0,
+                       y = -0.1))
+```  
+
+
+
+As expected, the frequency plot made it clear that Action had the least amount of skew compared to Drama and Biography. This was a good time I thought, to compare all the genres against each other. I grouped the data by genres and using the feature imdb_score I computed average ratings of each genre. I then, plotted a bar chart to display the top ten genres based on those averages.
+
+
+
+```{r, fig.height = 4, fig.width = 6, fig.align="center"}
+
+# creating a data frame containing avg score, avg votes and avg fb likes
+score_votes_likes <- mdata %>% 
+  group_by(genres) %>%
+  summarise(count = n(),
+            avg_score = round(mean(imdb_score), 1),
+            avg_votes = mean(num_voted_users),
+            avg_facebook_likes = mean(total_facebook_likes),
+            avg_reviews = mean(num_user_for_reviews)) %>%
+  filter(count > 10)
+
+# arranging data frame by average score
+arr_score <- arrange(score_votes_likes, desc(avg_score))
+
+# plotting 10 highest rated genres 
+bar_plot(arr_score[1:10,],
+         arr_score[1:10,]$avg_score,
+         arr_score[1:10,]$avg_score,
+         "| Average Score:",
+         "Genres",
+         "Average IMDB Score",
+         "Bar chart for 10 highest rated genres",
+         deci = 1)
+```
+
+
+All the genres had an average rating of 6.2 and above and were competitively rated against each other. Biography, with an average rating of 7.2, came out as the highest rated genre. Comedy, with an average score of 6.2, was the least rated genre of all. However, genre ratings alone did not imply much, user votes also needed to be taken into consideration.
+
+So the next thing I asked was, <i><span style = "color:tomato">Which were the most voted genres?</span></i> By grouping genres together and using the feature num_voted_users I was able to compute average number of votes for each genre. Based on these averages I graphed the top ten results using a bar chart. 
+
+
+```{r fig.height = 4, fig.width = 6, fig.align="center"}
+# arranging data frame by avg votes
+arr_votes <- arrange(score_votes_likes, desc(avg_votes))
+
+# plotting bar chart for 10 most voted genres
+bar_plot(arr_votes[1:10,],
+         arr_votes[1:10,]$avg_votes,
+         arr_votes[1:10,]$avg_votes,
+         "| Average Votes:",
+         "Genres",
+         "Average User Votes",
+         "Bar chart for 10 most voted genres")
+```
+
+
+
+With 188682 average votes per movie, Mystery was the most voted genre. Action, having 30% lesser votes than Mystery, was in the second place. Besides being the least rated, Comedy was the least voted genre of as well. Documentary did not even make the list despite having an average rating of 6.8. Maybe there weren't very many documentary movies fans on imdb but those who were, rated them relatively well.  
+
+<i><span style = "color:tomato">Which were the most facebook liked genres?</span></i> was my next question. In the setup phase of the analysis, I had created a feature named total_facebook_likes by summing up other features like: director_facebook_likes, actor_1_facebook_likes, actor_2_facebook_likes, actor_3_facebook_likes, cast_total_facebook_likes. It was created specifically to answer such kind of questions. Using this feature, I was able to compute average facebook likes on a genre wise basis. Based on those averages, I plotted the ten most most fb liked genres.    
+
+  
+```{r fig.height = 4, fig.width = 6, fig.align="center"}
+# arranging data frame by average fb likes
+arr_fb_likes <- arrange(score_votes_likes, desc(avg_facebook_likes))
+
+# plotting bar chart for top 10 genres by fb likes
+bar_plot(arr_fb_likes[1:10,],
+         arr_fb_likes[1:10,]$avg_facebook_likes,
+         arr_fb_likes[1:10,]$avg_facebook_likes,
+         "| Average FB Likes:",
+         "Genres",
+         "Average Facebook Likes",
+         "Bar chart for 10 most FB liked genres")
+```
+
+
+Biography was the most liked genre with average likes of 28416 likes per movie. Fantasy was the least liked genre with 13340 facebook likes per movie.  
+
+
+The next thing I was curious about was <i><span style = "color:tomato">On which genres did producers invest more?</span></i> My technique to answer this question remained the same, baring one exception. Before grouping the genres together, I filtered out budget and gross values that existed outide their respective inter quartile ranges. Almost 20% of budget and gross values were in currencies other than USD which created some awfully extreme observations. By filtering out such extreme values I thought I was able to normalise the data to an extent.  
+
+The subplot below displays log transformed histograms for Distribution of budget and gross.
+
+
+
+```{r  fig.height = 4, fig.width = 8, fig.align="center"}    
+options(scipen = 999)  
+# transformed budget histograms
+p1 <- budg_gross_hist(mdata$budget) %>% 
+  layout(annotations = a1)
+
+# transformed gross histograms
+p2 <- budg_gross_hist(mdata$gross) %>%
+  layout(annotations = b1) 
+
+subplot(p1, p2, widths = c(0.5, 0.5))
+```
+ 
+
+
+After filtering out extreme values, I used the budget feature to compute average budget of each genre. On the basis of those averages I plotted a bar chart of the ten most budgeted genres.      
+
+ 
+  
+```{r fig.height = 4, fig.width = 6, fig.align="center"}  
+# creating a data frame containing average budget, average gross profit, average ROI
+budg_gros_roi <- mdata %>%
+  filter(between(budget, 8, 67) | between(budget, 9, 50)) %>%
+  group_by(genres) %>%
+  summarise(count = n(),
+            avg_budget = mean(budget),
+            avg_gross_profit = mean(gross - budget),
+            avg_ROI = mean(return_on_investment)) %>%
+  filter(count > 10)
+
+# arranging budget by descending avg_budget
+arr_b <- arrange(budg_gros_roi, desc(avg_budget)) 
+
+# plotting top 10 budgeted movies
+bar_plot(arr_b[1:10,], 
+         arr_b[1:10,]$avg_budget, 
+         arr_b[1:10,]$avg_budget, 
+         "| Average Budget:",
+         "Genres",
+         "Average Budget in MM",
+         "Bar chart for 10 most budgeted genres",
+         deci = 2,
+         suf = "MM")
+
+```
+
+
+Action flicks were the most costly to produce having a whopping 35 Million dollars average budget per film. Adventure flicks with an average budget of 30.38 Million dollars per film took the second place. Animation took a close third spot with almost the same budget as Adventure. Fantasy had the lowest budget per film of 19.3 Million dollars.     
+
+
+After having known how much on an average was spent on producing a movie, the next obvious thing to know was how much does a movie pay back. In other words, <i><span style = "color:tomato">Which were the most porfitable genres?</span></i> Profit in this case was calculated by substracting budget from gross. Then the mean gross profit was calculated on a genre wise basis.
+$$ gross\,profit \,=\, gross\, - \, budget$$
+
+
+
+```{r fig.height = 4, fig.width = 6, fig.align="center"}
+# arranging df by avg_gross_profit  
+arr_g <- arrange(budg_gros_roi, desc(avg_gross_profit))
+
+# plotting 10 most profitable genres
+bar_plot(arr_g[1:10,],
+         arr_g[1:10,]$avg_gross_profit,
+         arr_g[1:10,]$avg_gross_profit,
+         "| Average Gross Profit:",
+         "Genres",
+         "Average Gross Profit in MM",
+         "Bar chart for 10 most profitable genres",
+         deci = 2,
+         suf = "MM")
+```
+
+
+I was surprised to see Fantasy being the most profitable genre of all. Fantasy movies were cheapest to produce yet yielded the maximum amount of profit per film. Adventure came in second with an average profit of 20 Million. Horror was at the third spot despite having a lower budget per film than most genres. Crime was the least profitable genre, making an average gross profit of 6.24 Million dollars per movie.
+
+Examining the genre wise budget and profit figures almost instantly sparked another question, <i><span style = "color:tomato">Which genres gave the best return on investment?</span></i> It wasn't directly possible to compute ROI because there was no ROI feature available. However, after creating a feature called return_on_investement I was able to do so. Using this feature, I calculated an average ROI on a genre wise basis and plotted the ten most investment efficient genres based on those averages. 
+
+Here is the formula for calculating ROI:
+$$ROI\, = {\,gross\,-\,budget \above 1pt budget}$$
+
+
+```{r fig.height = 4, fig.width = 6, fig.align="center"}
+# arranging df by descending average ROI
+arr_roi <- arrange(budg_gros_roi, desc(avg_ROI))
+
+# plotting top 10 roi's by genres  
+bar_plot(arr_roi[1:10,], 
+         arr_roi[1:10,]$avg_ROI, 
+         arr_roi[1:10,]$avg_ROI, 
+         "| Average ROI:",
+         "Genres",
+         "Average ROI",
+         "Bar chart for 10 most investment efficient genres",
+         deci = 2)
+
+```
+
+
+
+Fantasy, as expected, had the highest return on investment. Horror had the second highest return on investment. Adventure came in third while Animation was the least investment efficient genre. These observations immediately triggered another question. <i><span style = "color:tomato">Which genres had higher rate of commercial success?</span></i>  
+
+Before diving in to answer this question, I thought knowing about how many movies in total made profit or loss would be a nice. A donut chart helped me with that. 
+
+
+```{r fig.height = 4, fig.width = 6, fig.align="center"}
+
+# Plotting donut chart for share of movies making profit or loss 
+mdata %>%
+  group_by(profit_loss) %>%
+  summarise(count = n()) %>% 
+  plot_ly(labels = ~factor(profit_loss), values = ~count,
+          insidetextfont = list(color = 'Black'),
+          marker = list(colors = sample(brewer.pal(11, "Spectral")), 
+                        line = list(color = 'Black', width = .5)), 
+          opacity = 0.8) %>%
+  add_pie(hole = 0.6) %>%
+  layout(title = "Share of movies making profit or loss", 
+         titlefont = list(family = "Times", size = 20, color = "grey"),
+         xaxis = list(showgrid = T, zeroline = F, showticklabels = F),
+         yaxis = list(showgrid = T, zeroline = F, showticklabels = F),
+         showlegend = F, 
+         margin = list(t = 50, b = 50))
+```
+
+
+46.3% movies made loss while 53.7% movies made profit.   
+
+Higher number of profitable movies within a genre meant that it had a higher rate of monetery success. Therefore, to correctly calculate rate of success, I created a feature called profit_loss containing binary values. For all values where ROI was greater than zero, profit_loss was assigned a value of 1, else it was assinged a value of 0. Through this feature, I was able to extract a subset of all profitable movies and then was able to compute their percentages on a genre wise basis. Finally I plotted a bar chart to display the ten most commercially successful genres.   
+
+
+
+```{r fig.height = 4, fig.width = 6, fig.align="center"}
+# percentage of movies in a genre that made profit
+profit_prop <- mdata %>%
+  mutate(profitable_movies = profit_loss == 1) %>%
+  group_by(genres) %>%
+  summarise(count = n(),
+            profitable_movies = sum((profitable_movies)),
+            percentage_profitable_movies = profitable_movies/count) %>%
+  filter(count > 10) %>%
+  head(10) %>%
+  ggplot(aes(x = reorder(genres, percentage_profitable_movies), 
+             y = percentage_profitable_movies, fill = genres, 
+             text = paste("Genre:", genres,
+                          "<br>Number of movies:", count,
+                          "<br>Rate of success:", 
+                          percent(percentage_profitable_movies)))) +
+  geom_bar(stat = "identity", color = "black", size = 0.2, 
+           alpha = 0.7, width = 0.7, show.legend = F) +
+  xlab("Genres") +
+  ylab("Rate of Success") +
+  ggtitle("Bar chart for ten most successful genres") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_minimal() +
+  scale_fill_brewer(palette = "Spectral") +
+  theme(legend.position = "none",
+        plot.title = element_text(color = "grey", size = 14
+                                  ,family = "Times"))
+
+
+ggplotly(profit_prop, tooltip = "text") %>%
+  layout(margin = list(b = 100), xaxis = a, yaxis = a)
+```
+
+
+
+
+Fantasy took the top spot having an incredible 78.38% rate of commercial success. A very close second was Horror with 75.47% rate of commercial success. Documentary, surpisingly, was third with a decent succes rate of 61.54%. Drama, Action Biography all had a success rate less than 50%.  
+
+
+<i><span style = "color:tomato">Did profitable movies recieve more appreciation by the users?</span></i> I plotted a frequency plot to examine the frequency of scores separated by profit or loss making movies. This gave me a pretty good ides of how users rated both profit or loss making movies.
+
+
+
+```{r fig.height = 4, fig.width = 6, fig.align="center"}
+prof_loss <- mdata %>%
+  ggplot(aes(x = imdb_score, color = factor(profit_loss))) +
+  geom_freqpoly() +
+  scale_color_manual(values = c(sample(brewer.pal(11, "Spectral"))),
+                     labels = c("Loss", "Profit")) +
+  xlab("IMDB Score") +
+  theme_minimal()
+
+ggplotly(prof_loss) %>%
+  layout(margin = list(t = 50, b = 100), xaxis = a, yaxis = a, 
+         legend = list(orientation = "h", size = 4,
+                       bgcolor = "#E2E2E2",
+                       bordercolor = "darkgrey",
+                       borderwidth = 1,
+                       x = 0,
+                       y = -0.1))
+```
+
+
+
+There was surely something going on! The distrubtion for profit, labeled 1, was clearly more left skewed than the distribution for loss. Checking out their summaries confirmed that profit making movies had a better distribution of scores than loss making movies in every way. It was safe to assume that movies fairing well at box office had a higher chance of being appreciated by the audiences.   
+
+
+
+```{r}
+
+by(mdata$imdb_score, factor(mdata$profit_loss), summary)
+
+```  
+  
+
+
+<i><span style = "color:tomato">Which were the top rated movies?</span></i> I used the same bar chart approach again to answer this question. However, this time my intentions where to provide more information through the plot. I used this plot not only to display names of ten best rated films but also display information like genre name, director name, title year, budget, lead actor for each of those films. By hovering the mouse cursor over the bars of the plot I was able to view this information. This led to some interesting observations.
+
+
+
+
+```{r fig.height = 4, fig.width = 6, fig.align="center"}
+
+top_rated_movies <- mdata %>%
+  group_by(genres) %>%
+  filter(imdb_score == max(imdb_score)) %>%
+  arrange(desc(imdb_score)) %>%
+  head(10) %>%
+  ggplot(aes(x = reorder(movie_title, imdb_score), y = imdb_score, 
+             text = paste("Genre:", genres,
+                          "<br>Director Name:", director_name,
+                          "<br>Lead Actor:", actor_1_name,
+                          "<br>IMDB Score:", imdb_score,
+                          "<br>Title Year:", title_year, 
+                          "<br>Budget:", round(budget, 1), " MM",
+                          ifelse(gross-budget > 0, "<br>Gross Profit:", 
+                                 "<br>Gross Loss:"), 
+                          round(gross - budget, 1), " MM" ,
+                          "<br>ROI:", round(return_on_investment, 1)))) +
+  geom_bar(aes(fill = genres), stat = "identity", 
+           color = "black", size = 0.2, 
+           alpha = 0.7, width = 0.7, show.legend = F) +
+  geom_text(aes(label = genres, 
+                y = imdb_score + 0.3, 
+                color = genres), 
+            size = 2.5) +
+   scale_fill_brewer(palette = "Spectral") +
+  xlab("Movie Title") +
+  ylab("Imdb Score") +
+  ggtitle("Bar chart of ten best rated movies across genres") +
+  theme_minimal() +
+  theme(legend.position = "none",
+        plot.title = element_text(size = 14,
+                                  family = "Times", color = "darkgrey"))
+
+ggplotly(top_rated_movies, tooltip = "text") %>%
+  layout(margin = list(b = 120), xaxis = a, yaxis = a)
+```
+
+
+
+The interesting bit about this plot was the fact that most films in the plot were released before the year 2000 and yet were rated highly. For example, Alfred Hitchcock's 1960s film Psycho, not only had an astonishing ROI of 38.7 but also had an excellent rating of 8.5. Another 1960s film, Sergio Leone directed, The Good, the Bad and the Ugly had a rating of 8.9 and an ROI of 4.1. The late 1970s, Ridley Scott directed, Alien was another such example. The Shawshank Redemption released in 1994 was the highest rated movie of the entire dataset! I wasn't sure what to think of it except thinking questions like: Were older films better than newer ones? Was there a pattern between older films getting higher ratings? I wasn't sure because there were too few observations to make an any assumptions. I decided to investigate this further.  
+
+I created a new categorical feature named before_n_after_2000 containing binary values 0 and 1. Using the feature title_year, which contained release year corresponding to a title, I separated movies released before and after the year 2000. Movies released before the year 2000 were assigned a value of 0 else the value was 1. After having created this feature I used it to graph a distribution of imdb scores separated by 0 & 1 values.   
+
+
+
+```{r fig.height = 4, fig.width = 6, fig.align="center"}
+  
+# creating feature named before_n_after_2000 containing binary values
+mdata$before_n_after_2000 <- ifelse(mdata$title_year >= 2000, 1, 0)
+
+# plotting a histogram separated by before_n_after_2000
+his <- mdata %>%
+  ggplot(aes(x = imdb_score, fill = factor(before_n_after_2000))) +
+  geom_histogram(binwidth = 0.1, 
+                 color = "black",
+                 position = "dodge",
+                 size = 0.2,
+                 alpha = 0.7) +
+  xlab("IMDB Score") +
+  ggtitle("Distribution of scores before and after year 2000") +
+  scale_fill_manual(values = c(sample(brewer.pal(11, "Spectral")))) +
+  theme_minimal() + 
+  theme(plot.title = element_text(size = 14,
+                                  colour = "darkgrey",
+                                  family = "Times"))
+  
+
+ggplotly(his) %>%
+  layout(margin = list(t = 50, b = 100), 
+         xaxis = a, yaxis = a, 
+         legend = list(orientation = "h", size = 4,
+                       bgcolor = "#E2E2E2",
+                       bordercolor = "darkgrey",
+                       borderwidth = 1,
+                       x = 0,
+                       y = -0.1))  
+
+```  
+
+
+The distributions alone couldn't provide any conclusive evidence concerning older movies getting higher ratings. Checking the summary of scores did reveal that average rating of films released before 2000 was higher than the average rating of films released after 2000, but the difference was negligible. The only glaring difference between the two distribution was the count of movies in both categories. 2703 movies in the dataset were released after the year 2000 while only 1020 films were released before. A more thorough investigation was needed into this matter. 
+
+###<span style = "color:olive">Section Overview</span>### 
+
+<i><span style = "color:tomato" >What was the structure of my dataset?</span></i>  
+For my analysis I used a dataset containing movie data scraped from <a href = "https://www.imdb.com" target = "_blank">imdb.com</a>. This dataset was created by chuansun76 and was downloaded from <a href = "https://www/kaggle.com" target = "_blank">kaggle.com</a>. The dataset and the information concerning it can be found <a href = "https://www.kaggle.com/deepmatrix/imdb-5000-movie-dataset" target = "_blank">here</a>. Originally the dataset contained 5043 observations with 28 features. However, during the course my analysis the dataset was reduced to 3723 observations and the feature set was augmented to 33 features.  
+
+<i><span style = "color:tomato">What were the main feature(s) of interest in my dataset?</span></i>  
+Because this section focused on analysing movies through genres, the most intresting feature of my dataset was genre itself. 'genres' was basically a categorical feature in the dataset used for classifying movies. In its original form however, the feature wasn't of much use to me. I had to modify it to make it work according to my needs. Using genres along with other features like budget, gross, return_on_investment, imdb_score, num_users_voted, total_facebook_likes and profit_loss I was able to explore different aspects of the data.  
+
+<i><span style = "color:tomato">What other features in the dataset would help support my investigation into my feature(s) of interest?</span></i>  
+One feature that I did not use during my analysis, which I thought could have revealed some interesting observations, was content_rating. This feature contained information regarding maturity ratings of a movie as set by Motion Picture Association of America (MPAA). I could have used this feature to explore maturity ratings of different genres. For example, I could have used it to examine which genre contained maximum number of R rated films. Then I could have used it further to explore highly rated or highly profitable R rated movies. I could have used this feature to create a new feature containing age groups corresponding to their maturity ratings.    
+
+<i><span style = "color:tomato">Did I create any new variables from existing variables in the dataset?</span></i>  
+As mentioned earlier, there were originally 28 variables in the dataset which were augmented to 33 by the end of this part of the analysis. Here is a list of those features I created along with their brief decriptions: 
+<ul>
+<li>sub_genres: A categorical feature created out of genres. All the items from genres were tranfered to this feature.</li>
+<li>genres: A categorical feature that originally existed in the dataset. It was modified to contain just the first word from sub_genres.</li>
+<li>total_facebook_likes: A quantitative feature created by summing all the 'facebook_likes' features in the dataset.</li>
+<li>return_on_investment: A quantitative feature created from features gross and budget ((gross - budget) / budget). </li>
+<li>profit_loss: A binary feature assigned value of 1 if ROI is greater than zero else assigned value of 0.</li>
+<li>before_n_after_2000: A binary feature assigned value of 1 if title_year is greater than or equal to year 2000 else its value is 0. </li>
+</ul>  
+<br>
+
+###<span style = "color:olive">Act 2: Trends and Relationships</span>###
+
+In this section of the project I focused on observing trends and relationships between some of the features that I had analysed previously. I introduced other features of interest apart from genres to support my investigation and further the progress of this project.      
+
+In the previous section of the project I had briefly introduced release year of movie titles into my investigation. I wanted to expand on that approach further in this section. Thus, I used title year in association with some other features of the dataset to examine some trends. The first question I asked in this regard was, <i><span style = "color:tomato">Does release year of a movie affect its user rating, votes or reviews?</span></i> 
+
+I wanted to observe how the values of ratings, votes and reviews changed together over the course of time. I was able to do so, by plotting line graphs of each of those variables and then subplotting them together.     
+
+
+
+```{r fig.height = 6, fig.width = 10, fig.align="center"}
+# creating a data frame for average score, avg votes and, avg user reviews
+# by title year
+scat_year_score <- mdata %>%
+  group_by(title_year) %>%
+  summarise(count = n(),
+            IMDB_Score = round(mean(imdb_score),1),
+            avg_votes = mean(num_voted_users),
+            avg_user_review = round(mean(num_user_for_reviews)))
+
+# plotting line graph for Avg score by title year 
+lp1 <- line_graph(scat_year_score, 
+                  scat_year_score$IMDB_Score, 
+                  "Average Score")
+# plotting line graph for Avg votes by title year
+lp2 <- line_graph(scat_year_score, 
+                  scat_year_score$avg_votes, 
+                  "Average Votes")
+# plotting line graph for Avg reviews by title year
+lp3 <- line_graph(scat_year_score,
+                  scat_year_score$avg_user_review,
+                  "Average User Review") 
+
+
+subplot(lp1, lp2, lp3, nrows = 3, heights = c(0.33, 0.33, 0.33))
+
+```
+
+
+The graph showed quite clearly that user ratings were declining with time. But such trends were not observed for user votes or user reviews. However, one interesting thing that was quite visible from the trends was that votes and reviews were peaking where the ratings were higher and dipping where they were lower. These were definite signs of correlation between the three variables.   
+
+Plot Highlights: 
+<ul>
+<li>Average rating peaked at 8.9 for the year 1966.</li>
+<li>Average votes peaked at 586281 for the year 1972.</li>
+<li>Average user reviews peaked at 1210 for the year 1972 as well.</li>  
+</ul>  
+
+
+<i><span style = "color:tomato">Does release year affect budget and gross?</span></i> was the next question. To answer this question I used title year with variables budget and gross. This time, instead of plotting two separate line graphs for budget and gross and then subplotting them, I plotted both the features together in the same graph.     
+
+
+```{r fig.height = 4, fig.width = 10, fig.align="center"}
+
+# plotting a line graph for title_year vs avg_budget vs avg_gross 
+year_budg <- mdata %>%
+  group_by(title_year) %>%
+  summarise(avg_budget = round(mean(budget), 2),
+            avg_gross = round(mean(gross), 2))
+  
+p <- plot_ly(year_budg, x = ~title_year, y = ~avg_budget, 
+             name = 'Average Budget', type = 'scatter', mode = 'lines',
+             line = list(color = sample(brewer.pal(11, "Spectral"), 1))) %>%
+  add_trace(y = ~avg_gross, name = 'Average Gross', mode = 'lines',
+            line = list(color = sample(brewer.pal(11, "Spectral"), 1))) %>%
+  layout(margin = m, 
+         xaxis = list(title = "Title Year"),
+         yaxis = list(title = "Avg Budget/Avg Gross in MM"),
+         title = "Line Graph for Average Budget vs Average Gross", 
+         font = list(family = "Serif", color = "grey"),
+         legend = list(orientation = "h", size = 6,
+                       bgcolor = "#E2E2E2",
+                       bordercolor = "darkgrey",
+                       borderwidth = 1)) 
+p
+```
+
+
+It was evident from the plot that both budget and gross trends were rising with time. This meant that the cost of producing movies had steadily increased over the years and so had the amount they grossed at the box office.
+
+Plot Highlights:
+<ul>
+<li>Highest average budget was 104.97 MM dollars for year 2006</li>
+<li>Highest average gross was 184.93 MM dollars for year 1937</li>
+</ul>
+
+
+<i><span style = "color:tomato">Was there a correlation between user votes and imdb score?</span></i> A connection between user votes and imdb score was observed in the time series plot I had graphed earlier. This was a good time to investigate their relationship further and check how strong their bond was. I did that by plotting a scatter plot for user votes versus imdb score.
+
+
+```{r fig.height = 4, fig.width = 6, fig.align="center"}
+# scatter plot for user votes vs imdb score
+scatter_plot(mdata$num_voted_users, mdata$imdb_score, 
+     "User Votes",
+     "IMDB Score",
+     "Scatter plot for User Votes vs IMDB Score",
+     "User Votes:",
+     "<br>IMDB Score:",
+     "<br>Title:",
+     alpha = 0.3)
+```
+
+
+
+Because of over plotting it was difficult to observe correlations between user rating and votes for much of the data points. However, in general, the plot definitely showed a positive correlation between rating and votes. In other words, the observation suggested that users voted more for highly rated movies. This connection between rating and votes was further accentuated by the boxplot I plotted next.   
+
+
+```{r echo=T}
+# breaking num_users_voted into 4 buckets 
+mdata$vote_bucket <- cut(mdata$num_voted_users, 
+                         c(0, 50000, 100000, 300000, 500000))
+```
+
+
+
+```{r  fig.height = 4, fig.width = 6, fig.align="center"}
+# plotting a boxplot for votes vs imdb_score  
+bp <- na.omit(mdata) %>% 
+  ggplot(aes(x = vote_bucket, y = imdb_score)) +
+  geom_boxplot(aes(fill = vote_bucket), alpha = 0.7,
+               show.legend = F) +
+  stat_summary(fun.y = mean, geom = "point",
+               shape = 23) +
+  coord_flip() +
+  xlab("User Votes") +
+  ylab("IMDB Score") +
+  ggtitle("Box plot for User Votes vs IMDB Score") +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 14, 
+                                  color = "darkgrey",
+                                  family = "Times"))
+  
+ggplotly(bp) %>%
+  layout(margin = m, 
+         xaxis = a, 
+         yaxis = a,
+         legend = list(orientation = "h", size = 4,
+                       bgcolor = "#E2E2E2",
+                       bordercolor = "darkgrey",
+                       borderwidth = 1,
+                       x = 0,
+                       y = -0.3)) 
+```
+
+
+I broke votes into 4 buckets and assigned those values to a new feature called vote_buckets. Then I plotted boxplots for each of those buckets to show their range of scores. The constantly rising mean scores as the votes increased, was further evidence of the strong correlation between users votes and user rating.
+
+
+
+After observing a connection between votes and rating I was curious to know, <i><span style = "color:tomato">Was there a correlation between user votes and user reviews?</span></i>   
+
+
+
+```{r fig.height = 4, fig.width = 6, fig.align="center"}
+
+# using custom fuction to plot a scatter plot for num_voted_users vs 
+# num_user_for_reviews
+plot_c <- scatter_plot(mdata$num_voted_users, mdata$num_user_for_reviews,
+             "User Votes",
+             "User Reviews",
+             "Scatter plot for User Votes vs User Reviews",
+             "Number of User Votes:",
+             "<br>Number of User Reviews:",
+             "<br>Title:",
+             alpha = 0.1)
+
+# zooming into the plot
+zoom_vote_rev <- mdata %>%
+  filter(between(num_voted_users, 5000, 500000) & 
+           between(num_user_for_reviews, 0, 1000)) %>%
+  ggplot(aes(x = num_voted_users, 
+             y = num_user_for_reviews,
+             text = paste("Number of User Votes:", num_voted_users,
+                          "<br>Number of User Reviews:", num_user_for_reviews))) +
+  geom_point(shape = 21, 
+             show.legend = F, stroke = 0.15, 
+             position = "jitter", 
+             alpha = 0.3) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+plot_d <- ggplotly(zoom_vote_rev, tooltip = "text") %>%
+  layout(m, xaxis = a, yaxis = a)
+
+# creating subplots
+subplot(plot_c, plot_d, widths = c(0.5, 0.5))
+  
+```
+
+
+
+```{r echo=T}
+# creating a formattable showing average reviews per film 
+# values are color coded to show their linear increase as the number 
+# of votes increases
+na.omit(mdata) %>%
+  group_by(vote_bucket) %>%
+  summarise(average_review_per_film = 
+              round(mean(num_user_for_reviews))) %>%
+  formattable(list(average_review_per_film = 
+                     color_bar(sample(brewer.pal(11, "Spectral"),1)))) %>%
+  as.datatable()
+```
+
+
+Surely there was! The plots showed quite an obvious positive correlation between user votes and user reviews. I subplotted the same scatter plot twice. One with normal view, on the left. Second with a more zoomed in view, on the right. As I zoomed in on the plot by filtering out values outside 5000 - 50000 on the x axis and 0 - 1000 on the y axis, the correlation got more pronounced.  
+To examine this realtionship further, I used a formattable table to show average reviews per film in each of the vote buckets I had created earlier. The color coded cells showed very simply the increase in number of reviews as the number of votes increased. In much simpler words, all this meant that films that were voted more were also reviewed more.    
+
+
+<i><span style = "color:tomato">Do higher rated movies gross more?</span></i> First, I plotted a scatter plot to see if there was connection between the two. 
+
+
+```{r fig.height = 4, fig.width = 6, fig.align="center"}
+# using custom function to plot a scatter plot for 
+# user rating vs gross
+scatter_plot(mdata$imdb_score, mdata$gross,
+             "IMDB Score",
+             "Gross in MM",
+             "Scatter plot for IMDB Score vs Gross",
+             "User Rating:",
+             "<br>Gross in MM:",
+             "<br>Title:",
+             alpha = 0.3)
+```
+
+
+I couldn't observe any apparent connection between the two variables. I thought, may be log transforming the score values could make their connection more visible. So I plotted the same scatter plot, this time with log transformed predictor values.
+
+
+```{r fig.height = 4, fig.width = 6, fig.align="center"}
+# log transformed x scale
+trns <- mdata %>%
+  ggplot(aes(x = imdb_score, y = gross)) +
+  geom_jitter(alpha = 0.3, shape = 21,
+              stroke = 0.2) +
+  xlab("IMDB Score") +
+  ylab("Gross in MM") +
+  ggtitle("Scatter plot for log transformed IMDB score vs Gross") +
+  scale_x_log10(breaks = c(2, 3, 5, 8)) +
+  geom_smooth(stat = "summary", fun.y = mean, 
+            color = sample(brewer.pal(11, "Spectral"), 1),
+            size = 0.6) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 14,
+                                  color = "darkgrey",
+                                  family = "Times"))
+
+ggplotly(trns) %>%
+  layout(margin = m,
+         xaxis = a, yaxis = a)
+
+```
+
+
+Despite transforming the values there wasn't much to write home about. The summary line that I plotted along with the plot did, however, show that gross values were gradually rising with higher scores. But the correlation between ratings and gross was too weak. To be sure about this, I used the cor function to measure the correlation coefficient of the two variable.  
+
+
+```{r echo=T}
+# correlation between imdb_score and gross of the entire data
+round(cor(mdata$imdb_score, mdata$gross, method = "pearson"),2)
+```
+
+The r value of 0.22 was an indication that correlation between rating and gross wasn't statistically meaningful. To test this relationship even further, I measured the correlation between rating and gross of only profit making movies. 
+
+```{r echo=T}
+# correlation between imdb_score and gross for profitable movies
+prof <- mdata[mdata$profit_loss == 1,]
+with(prof, round(cor(imdb_score, gross, method = "pearson"), 2))
+```
+
+That too, came out to be statistically insignificant.  
+
+
+<i><span style = "color:tomato">User ratings had failed to show any meaningful connection with gross, but what about user reviews? Did more reviewed movies make more money?</span></i>
+
+I plotted a scatter plot to find out.
+
+```{r fig.height = 4, fig.width = 6, fig.align="center"}
+# using custom funtion to plot a scatter plot for
+# user reviews vs gross
+scatter_plot(mdata$num_user_for_reviews,
+             mdata$gross,
+             "User Reviews",
+             "Gross in MM",
+             "Scatter plot for User Reviews vs Gross",
+             "User Reviews:",
+             "<br>Gross in MM:",
+             "<br>Title:",
+             alpha = 0.3)
+```
+
+
+
+Indeed, user reviews had a visibly higher positive relationship with gross than user rating. Their r value was measured to be 0.55, suggesting that their correlation was more than moderate. 
+
+
+```{r echo=T}
+# correlation between user reviews and gross
+round(cor(mdata$num_user_for_reviews, mdata$gross),2)
+```
+
+
+
+I broke user reviews into 4 buckets and assigned them to a new variable called review_bucket. Then I used a formattable table to show average gross per film in each of those review buckets. I color coded the cells to accentuate the increase in average gross as the reviews increased. These observations gave enough evidence to safely assume that movies that were reviewed more were more successful at the box office.     
+
+
+
+```{r}
+
+# creating a new feature called review_bucket
+mdata$review_bucket <- cut(mdata$num_user_for_reviews,
+                           c(0, 1000, 2000, 3000, 5060))
+
+# creating a formattable table to display review_bucket size
+# and their corresponding average gross values
+mdata %>%
+  group_by(review_bucket) %>%
+  summarise(average_gross = round(mean(gross),2)) %>%
+  formattable(list(average_gross = 
+                     color_bar(sample(brewer.pal(11, "Spectral"),1)))) %>%
+  as.datatable()
+```
+
+
+
+###<span style = "color:olive">Section Overview</span>###
+
+
+<i><span style = "color:tomato">What were some of the relationships I observed in this part of the investigation? How did the feature(s) of interest vary with other features in the dataset?</span></i>   
+In this section I used features like title year, user votes, user reviews and user votes to establish correlations either with one another or with other variables in the dataset. Some noteworthy correlations that I observed during the course of this section are mentioned below:
+<ul>
+<li>Using title year as a feature of interest, I investigated correlations between user ratings, user votes and user reviews. User rating, specifically, showed a negative correlation with title year. Meaning that user rating for movies had declined over a period of time. User votes and user reviews, however, did not show any significant trends with respect to title year.</li>
+<li>Features like budget and gross showed a positive relationship with title year. Their trends revealed that production costs and box office earnings had both increased with time.</li>
+<li>Strong positive correlations were observed for user rating, user votes and user reviews that led me to conclude that higher rated movies were more voted and more reviewed.</li>
+<li>A siginificantly positive correlation was observed between user reviews and gross suggesting that movies that were reviewed more earned more at the box office.</li>
+</ul>  
+
+One of my favorite features in this section was title year. Using title year with other variables, I was able to observe changes in the values of those variable over a period of time. This was specifically helpful in observing trends related to user rating, budget and gross. In this respect title year was unlike any other feature I used in the dataset. 
+
+<i><span style = "color:tomato">What was the strongest relationship I found?</span></i>  
+The strongest relationship I observed in this section was between user votes and user reviews. They had a positive correlation suggesting, movies that were voted more were reviewed more as well. The scatter plot along with a formidable r value of 0.77 were able to display their correspondence quite convincingly.
+
+
+###<span style = "color:olive">Act 3: The Last Enquiry</span>### 
+
+
+In this section I focused on investigating data on the basis of gross profit or gross loss a film made. I was specifically interested in knowing <i><span style = "color:tomato">how much profit or loss on an average did films make over a period of time (or in this case years)</span></i>. Using title_year, I was able to plot a bar chart for average gross profit/loss per year and separated those values by using another feature, profit_loss. Though the graph represented the values quite effectively, yet, I felt that the information wasn't quite complete. I felt that I also needed to know the number of profit or loss making films per year. In other words, <i><span style = "color:tomato">I needed to know what was the profit to loss ratio of movies per year</span></i>. Once I had that plot in place, I subplotted the two plots and presented them together. There was just one more plot needed to conclude this investigation. A plot that could intuitively display the trends of profit to loss ratio over time. Using a line graph I was able to plot those trends accordingly.        
+
+
+
+```{r fig.align="center", fig.height= 6, fig.width=10}
+# plotting barchart for year wise gross profit or gross loss
+gross_p_chart <- mdata %>%
+  group_by(title_year) %>%
+  ggplot(aes(x = title_year, y = gross - budget)) +
+  geom_bar(aes(fill = factor(profit_loss)), stat = "summary", fun.y = mean,
+           alpha = 0.7, 
+           color = "black",
+           size = 0.2,
+           show.legend = F) +
+  xlab("Title Year") +
+  ylab("Gross Profit/Loss") +
+  scale_fill_manual(values = sample(brewer.pal(11, "Spectral"))) +
+  scale_x_continuous(breaks = seq(1925, 2016, 2)) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 14,
+                                  color = "darkgrey",
+                                  family = "Times"))
+  
+gpchart <- ggplotly(gross_p_chart) %>%
+  layout(margin = m,
+         xaxis = a,
+         yaxis = a,
+         legend = list(orientation = "h", size = 4,
+                       bgcolor = "#E2E2E2",
+                       bordercolor = "darkgrey",
+                       borderwidth = 1,
+                       x = 0.05,
+                       y = -0.15))
+
+
+# creating a data frame to calculte profit to loss ratio
+profit_prop <- mdata %>%
+  group_by(title_year) %>%
+  mutate(profit = profit_loss == 1,
+         loss = profit_loss == 0) %>%
+  summarise(profit = sum(profit),
+            loss = sum(loss),
+            average_rating = round(mean(imdb_score), 1),
+            count = n())
+
+# creating a bar chart for profit to loss ratio of movies per year
+ratio_plot <- profit_prop %>%
+  ggplot(aes(title_year, y = profit/loss,
+         text = paste("Title Year:", title_year,
+                      "| Profit to Loss ratio of movies:", round(profit/loss, 2),
+                      "<br>profit %age:", percent(profit/count),
+                      "| loss %age:", percent(loss/count),
+                      "<br>Average Rating:", average_rating))) +
+  geom_bar(stat = "identity",
+           fill = sample(brewer.pal(11, "Spectral"), 1),
+           alpha = 0.7,
+           color = "black",
+           size = 0.2) +
+  ylab("Profit-Loss Ratio") +
+  xlab("Title Year") +
+  scale_x_continuous(breaks = seq(1925, 2016, 2)) +
+  theme_minimal()
+
+propchart <- ggplotly(ratio_plot, tooltip = "text") %>%
+  layout(margin = m,
+         xaxis = a,
+         yaxis = a)
+
+# creating a properly formatted subplot
+subplot(gpchart, propchart, nrows = 2, heights = c(0.5, 0.5),
+        shareX = TRUE, margin = 0.05, titleY = TRUE) %>%
+  layout(annotations = list(list(x = 0.5 , 
+                                 y = 1.13, 
+                                 font = list(family = "Times",
+                                             color = "darkgrey"),
+                                 align = "center",
+                                 text = "Gross Profit/Loss by year", 
+                                 showarrow = F, 
+                                 xref='paper', 
+                                 yref='paper'),
+                            list(text = "Profit to Loss ratio by year", 
+                                 font = list(family = "Times",
+                                             color = "darkgrey"),
+                                 showarrow = F, 
+                                 xref='paper', 
+                                 yref='paper',
+                                 align = "center")))
+
+
+```
+
+
+```{r fig.align="center", fig.height= 4, fig.width=10}
+# trend line for 
+prof_loss_1980 <- profit_prop %>%
+  ggplot(aes(x = title_year, y = profit/loss,
+             text = paste("Title Year:", title_year,
+                          "| Profit to Loss ratio:", paste(profit,":",loss)),
+             group = 1)) +
+  geom_smooth(linetype = 3, 
+              size = 0.35,
+              se = F,
+              color = "black") +
+   geom_line(color = sample(brewer.pal(11, "Spectral"),1)) +
+  xlab("Title Year") +
+  ylab("Profit to Loss ratio") +
+  ggtitle("Profit to Loss ratio of movies from 1980 to 2016") +
+  scale_x_continuous(limits = c(1980, 2016),
+                     breaks = seq(1980, 2016, 1)) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 12,
+                                  color = "darkgrey",
+                                  family = "Times"))
+
+
+ggplotly(prof_loss_1980, tooltip = "text") %>%
+  layout(margin = list(b = 100),
+         xaxis = a,
+         yaxis = a)
+```
+
+
+With an average gross profit of 182.93 Million Dollars, the year 1937 was by far the best year for movies making money. On the other hand, 1988 seemed to be the worst year for the film industry observing an average gross loss close to 188 Million Dollars. Plotting the average gross profit/loss figures gave a good idea of how those values were spread across the years, but it was the profit to loss ratio of films that really showed me how more number of films were losing money over the year. One thing to note here was the absense of a lot of bar in the profit to loss ratio bar graph. That happened because some ratios remained undefined due to one of the values in the ratio being 0. However, even with those missing values, the graph was able to display the consistent decline in profit ratios from 1980 onwards quite clearly. The highest peak in the graph was observed for the year 1983 where the profit-loss ratio was a stupendous 12:1. These figures hit rock by the year 2008 where the ratio was reduced to a meagre 0.76:1.   
+
+The table below conveys the story of the commercial side of cinema more elaborately. 
+
+
+```{r}
+# creating a new feature gross_profit_loss
+mdata$gross_profit_loss <- mdata$gross - mdata$budget
+
+# creating a new data frame for total, average, max, min profit or loss
+data_by_title_year <- mdata %>%
+  group_by(title_year) %>%
+  summarise(number_of_profitable_movies = 
+              sum(profit_loss == 1),
+            number_of_unprofitable_movies = 
+              sum(profit_loss == 0),
+            total_yearly_profit = 
+              round(sum(gross_profit_loss[gross_profit_loss > 0]), 2),
+            total_yearly_loss = 
+              round(sum(gross_profit_loss[gross_profit_loss < 0]), 2),
+            prof_loss_difference =
+              round(total_yearly_profit + total_yearly_loss, 2),
+            average_yearly_profit = 
+              round(mean(gross_profit_loss[gross_profit_loss > 0]), 2),
+            average_yearly_loss = 
+              round(mean(gross_profit_loss[gross_profit_loss < 0]), 2),
+            max_profit_by_a_movie = 
+              round(max(gross_profit_loss[gross_profit_loss > 0]),2),
+            max_loss_by_a_movie = 
+              round(min(gross_profit_loss[gross_profit_loss < 0]),2))
+
+# converting NaN and inf values to NA
+data_by_title_year <- do.call(data.frame,
+                              lapply(data_by_title_year, 
+                                     function(x) replace(x, is.infinite(x),NA)))
+data_by_title_year <- do.call(data.frame,
+                              lapply(data_by_title_year,
+                                     function(x) replace(x, is.nan(x), NA)))
+
+# creating a fomattable table
+color <- sample(brewer.pal(11, "Spectral"))
+sign_formatter <- formatter("span", 
+  style = x ~ style(color = ifelse(x > 0, "green", "red")))
+
+data_by_title_year %>%
+  formattable(list(number_of_profitable_movies = 
+                     color_bar(sample(color, 1)),
+                   number_of_unprofitable_movies = 
+                     color_bar(sample(color, 1)),
+                   average_yearly_profit = 
+                     color_tile("transparent", sample(color, 1)),
+                   average_yearly_loss = 
+                     color_tile(sample(color, 1), "transparent"),
+                   max_profit_by_a_movie = 
+                     color_tile("transparent", sample(color, 1)),
+                   max_loss_by_a_movie = 
+                     color_tile(sample(color, 1), "transparent"),
+                   total_yearly_profit = 
+                     color_tile("transparent", sample(color, 1)),
+                   total_yearly_loss = 
+                     color_tile(sample(color, 1), "transparent"),
+                   prof_loss_difference = sign_formatter)) %>%
+  as.datatable(options = list(pageLength = 80, scrollX = TRUE))
+
+```
+
+
+The table clearly shows how more and more films started lose money from 1990 onwards. And then there was this patch between 2000 - 2012 where more than 50% films on an average were losing money. Nonetheless, total gross profit figures told a completely different story. Despite lesser films succeeding at the box office, the film industry was still making higher profits than loss. These observations were certainly favouring the film industry as a whole. But the falling success rate of films was not an encouraging sign for independent producers or filmmakers keen on establishing themselves in the industry. 
+
+
+There was just one final thing left to do, plot a yearly profit-loss ratio on a genre wise basis. Because I wanted genres with lesser undefined ratios, I used only those genres that contained a count of more than hundred movies.     
+
+
+```{r fig.align="center", fig.height=10, fig.width=6}
+
+# plotting a genre wise bar chart of gross profit/loss by title year
+gp_top_7_genres <- mdata %>%
+  filter((genres == "Action" | genres == "Adventure" |
+           genres == "Crime" | genres == "Comedy" |
+           genres == "Drama" | genres == "Horror" |
+           genres == "Biography") & title_year  > 1980) %>% 
+  group_by(title_year, genres) %>%
+  mutate(profit = profit_loss == 1,
+         loss = profit_loss == 0) %>%
+  summarise(profit = sum(profit),
+            loss = sum(loss),
+            average_rating = round(mean(imdb_score), 1),
+            count = n()) %>%
+  ggplot(aes(x = title_year, y = profit/loss,
+             text = paste("Title Year:", title_year,
+                      "| Profit to Loss ratio of movies:", round(profit/loss, 2),
+                      "<br>profit %age:", percent(profit/count),
+                      "| loss %age:", percent(loss/count),
+                      "<br>Average Rating:", average_rating))) +
+  geom_bar(aes(fill = genres), stat = "identity",
+           alpha = 0.7,
+           color = "black",
+           size = 0.2,
+           width = 0.7) +
+  facet_wrap(~genres, scales = "free_y", ncol = 1) +
+  scale_fill_brewer(palette = "Spectral") +
+  scale_x_continuous(breaks = seq(1980, 2016, 1)) +
+  xlab("Title Year") +
+  ylab("Gross Profit/Loss (gross - budget)") +
+  ggtitle("Profit-Loss ratio of movies separated by Genres from 1980 - 2016") +
+  theme_minimal() +
+  theme(legend.position = "none",
+        plot.title = element_text(size = 14,
+                                  color = "darkgrey",
+                                  family = "Times"))
+
+
+ggplotly(gp_top_7_genres, tooltip = "text") %>%
+  layout(margin = m, xaxis = a,
+         yaxis = a)
+```
+
+
+All the genres showed different profit-loss ratio trends. But Action showed the most consistent decline in profit ratios than other genres. Below is a table that summarises the key points of the plot and more.
+
+
+```{r}
+
+# creating a dataframe to display genre wise data for the top 7
+# genres by movie count
+genre_wise_data <- mdata %>%
+  filter((genres == "Action" | genres == "Adventure" |
+           genres == "Crime" | genres == "Comedy" |
+           genres == "Drama" | genres == "Horror" |
+           genres == "Biography") & title_year  > 1980) %>% 
+  group_by(genres) %>% 
+  summarise(number_of_profitable_films = 
+              round(sum(profit_loss == 1),2),
+            number_of_unprofitable_films = 
+              round(sum(profit_loss == 0),2),
+            proportion_of_profitable_films = 
+              round(sum(profit_loss == 1)/n(), 2),
+            total_gross_profit = 
+              round(sum(gross_profit_loss[gross_profit_loss > 0]),2),
+            total_gross_loss = 
+              round(sum(gross_profit_loss[gross_profit_loss < 0]),2),
+            average_gross_profit = 
+              round(mean(gross_profit_loss[gross_profit_loss > 0]),2),
+            average_gross_loss = 
+              round(mean(gross_profit_loss[gross_profit_loss < 0]),2))
+
+# creating a dataframe for extracting best and worst years 
+# on the basis of profit-loss ratio
+year <- mdata %>%
+  filter((genres == "Action" | genres == "Adventure" |
+           genres == "Crime" | genres == "Comedy" |
+           genres == "Drama" | genres == "Horror" |
+           genres == "Biography") & title_year  > 1980) %>% 
+  group_by(genres,title_year) %>% 
+  summarise(profit = sum(profit_loss == 1),
+            loss = sum(profit_loss == 0),
+            profit_loss_ratio = round(profit/loss, 2),
+            average_rating = round(mean(imdb_score),1))
+
+# converting undefined values to NA values
+year <- do.call(data.frame,
+                lapply(year, function(x) replace(x, is.infinite(x),NA)))
+
+# extracting best year
+best_year <- na.omit(year) %>%
+  group_by(genres) %>%
+  filter(profit_loss_ratio == max(profit_loss_ratio))
+
+# extracting worst year
+worst_year <- na.omit(year) %>%
+  group_by(genres) %>%
+  filter(profit_loss_ratio == min(profit_loss_ratio))
+
+# adding bset and worst year data to the genre_wise data
+genre_wise_data$best_year <- best_year[c(-5, -7),]$title_year
+genre_wise_data$worst_year <- worst_year[c(-3, -4),]$title_year
+
+# creating a formattable table
+# color coding best and worst year if year is > 2000 
+sign_formatter <- formatter("span", 
+  style = x ~ style(color = ifelse(x > 2000, "green", "red")))  
+
+genre_wise_data %>%
+  formattable(list(number_of_profitable_films =
+                     color_bar(sample(color, 1)),
+                   number_of_unprofitable_films =
+                     color_bar(sample(color, 1)),
+                   proportion_of_profitable_films =
+                     color_tile("transparent", sample(color, 1)),
+                   average_gross_profit = 
+                     color_tile("transparent", sample(color, 1)),
+                   average_gross_loss =
+                     color_tile(sample(color, 1), "transparent"),
+                   total_gross_profit =
+                     color_tile("transparent", sample(color, 1)),
+                   total_gross_loss =
+                     color_tile(sample(color, 1), "transparent"),
+                   best_year = sign_formatter,
+                   worst_year = sign_formatter)) %>%
+  as.datatable(options = list(pageLength = 10, scrollX = TRUE))
+```
+
+
+
+
+
+
+###<span style = "color:olive">Overview</span>### 
+
+<i><span style = "color:tomato">What were some of the relationships I observed in this part of the investigation. Were there features that strengthened each other in terms of looking at my feature(s) of interest?</i></span>  
+This section gave me the opportunity to study the business aspect of movie making. I was able to plot charts that allowed me to observe gross profit or gross loss trends over a period of time. I was also able to observe profit to loss ratio of movies and how that ratio had declined over a period of time. I further examined profit to loss ratio by plotting them on a genre wise basis. Besides plotting graphs, I created tables that provided supporting information regarding the commerciality of movies. 
+The investigation of this section wouldnt have been possible without the feature budget and gross. On the basis of these two features I was able compute gross profit and then futher compute average gross profit or gross loss. Using these to two feature I was also able to count the number of profitable and unprofitable films which further helped me to compute profit-loss ratios. These two features definitly strenghtened each other and made the investagtion for this section possible.  
+
+<i><span style = "color:tomato">Were there any interesting or surprising interactions between features?</span></i>  
+I think the most interesting interaction I observed in this section was between profit-loss ratio and title year. Plotting the profit-loss ratio of films against title year displayed how the profit ratio had declined over the year. I was indeed surprised by this investigation because it revealed how steeply the profit ratios had declined from 12:1 in 1983 to 0.76:1 in 2008. 
+
+###<span style = "color:olive">Extras: Final Plots and Summary</span>###
+
+Below are the three plots along with their brief descriptions that can provide an overview of the analysis:
+
+<b>Plot 1:</b>  
+The distribution of scores
+
+
+```{r fig.height = 4, fig.width = 6, fig.align = "center"}
+# Distribution of imdb scores using a custom plot function
+hist_plot(mdata$imdb_score, bwidth = 0.1, 
+          "IMDB Score", 
+          fill = sample(brewer.pal(11, "Spectral"), 1),
+          color = "black") 
+```
+
+
+<b>Description:</b>  
+Distribution of imdb score appears to be normal, however score of 6.0 to 7.0 are skewing it slightly to the left.
+
+
+
+<b>Plot 2:</b>  
+User votes and user reviews- the strongest correlated features.
+
+
+
+```{r fig.height = 4, fig.width = 6, fig.align="center"}
+
+# using custom fuction to plot a scatter plot for num_voted_users vs 
+# num_user_for_reviews
+plot_c <- scatter_plot(mdata$num_voted_users, mdata$num_user_for_reviews,
+             "User Votes",
+             "User Reviews",
+             "Scatter plot for User Votes vs User Reviews",
+             "Number of User Votes:",
+             "<br>Number of User Reviews:",
+             "<br>Title:",
+             alpha = 0.1)
+
+# zooming into the plot
+zoom_vote_rev <- mdata %>%
+  filter(between(num_voted_users, 5000, 500000) & 
+           between(num_user_for_reviews, 0, 1000)) %>%
+  ggplot(aes(x = num_voted_users, 
+             y = num_user_for_reviews,
+             text = paste("Number of User Votes:", num_voted_users,
+                          "<br>Number of User Reviews:", num_user_for_reviews))) +
+  geom_point(shape = 21, 
+             show.legend = F, stroke = 0.15, 
+             position = "jitter", 
+             alpha = 0.3) +
+  xlab("User Votes") +
+  ylab("User Reviews") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+plot_d <- ggplotly(zoom_vote_rev, tooltip = "text") %>%
+  layout(m, xaxis = a, yaxis = a)
+
+# creating subplots
+subplot(plot_c, plot_d, widths = c(0.5, 0.5), 
+        titleX = T, titleY = T)
+  
+```
+
+
+
+<b>Description:</b>  
+An obvious postive correlation was observed between user votes and user reviews. With an r value of 0.77, it was apparently also the strongest correlation of the entire analysis.   
+
+
+<b>Plot 3:</b>  
+Profit-Los ratio of movies per year  
+
+
+
+```{r fig.align="center", fig.height= 4, fig.width=10}
+# trend line for 
+prof_loss_1980 <- profit_prop %>%
+  ggplot(aes(x = title_year, y = profit/loss,
+             text = paste("Title Year:", title_year,
+                          "| Profit to Loss ratio:", paste(profit,":",loss)),
+             group = 1)) +
+  geom_smooth(linetype = 3, 
+              size = 0.35,
+              se = F,
+              color = "black") +
+   geom_line(color = sample(brewer.pal(11, "Spectral"),1)) +
+  xlab("Title Year") +
+  ylab("Profit to Loss ratio") +
+  ggtitle("Profit to Loss ratio of movies from 1980 to 2016") +
+  scale_x_continuous(limits = c(1980, 2016),
+                     breaks = seq(1980, 2016, 1)) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 12,
+                                  color = "darkgrey",
+                                  family = "Times"))
+
+
+ggplotly(prof_loss_1980, tooltip = "text") %>%
+  layout(margin = list(b = 100),
+         xaxis = a,
+         yaxis = a)
+```
+
+
+
+<b>Description:</b>   
+
+I plotted this line graph to display the profit to loss ratio of movies per year. Dispite some missing values (because of undefined ratios), the graph was able to display the consistent decline in profit ratios from 1980 onwards.
+
+
+###<span style = "color:olive">Reflection</span>###
+
+In its original form the imdb movie data set contained data on 5043 movies across 28 variables. After removing NA and duplicate values the data points were reduced to 3723 observations. I engineered 8 new features during the course of the project increasing the tally of features to 36 by the end. To progress in a systematic way, I divided the project into three parts. The first dealt with premilinary exploration of data through genres. In the second part, relationships and trends between variables were examined. And in the concluding part, I emphasised more on understanding the commercial side of movies.
+
+During my investigation user reviews and user votes showed the strongest correlation between any two variables I had observed. Observing user rating, budget and gross figures with title year showed how ratings had declined over the years. While budget and gross figures showed how they had inclined over the year. I was hoping to see a positive relationship between user ratings and gross, however when I plotted a scatter plot to check their correlation, I found nothing between them. I struggled at that point to find a decent correlation between them. I tried tranforming ratings to log scale but it still didnt work.      
+
+In the concluding part of the analysis, I observed gross profit/loss and profit to loss ratio figures over time. Some surprising insights come to light during this analysis. I observed how the profit to loss ratio of movies had declined over the years yet the film industry kept making money.   
+
+I am thankful to chaunsun76 for creating this dataset and making it available for other to use. Even though it is a fantastic dataset, it can be further optimised and improved. Adding a feature like critic ratings and standardizing features budget and gross in one currency can make this dataset even more effective. Also I would like to see more number of movies released before the year 2000 added to the dataset. This will help in drawing better results when comparing movies with repect to the year they were released in. An imporved version of this dataset can be used to perform more comprehensive explorations and serious insight can be gained about the business of movies.      
+
+</body>title: Understanding Movies
+author: Gautam Joshi
+date: '2017-10-12'
+slug: understanding-movies
+categories: [Data Science, Exploratory Data Analysis]
+tags: [Movies, Data Science, imdb.com, kaggle.com]
+---
+

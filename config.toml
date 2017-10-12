@@ -1,4 +1,4 @@
-baseurl =  "https://gigaelectron.github.io/blogdown-hugo-website/"
+baseurl =  "https://gigaelectron.github.io/blogdown/"
 languageCode = "en-us"
 title = "Hello there!"
 theme = "hugo-lithium-theme"

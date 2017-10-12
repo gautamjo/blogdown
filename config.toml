@@ -1,6 +1,6 @@
-baseurl =  "https://gigaelectron.github.io/blogdown-hugo-sample-website/"
+baseurl =  "/"
 languageCode = "en-us"
-title = "A Hugo website"
+title = "Hello there!"
 theme = "hugo-lithium-theme"
 publishDir = "docs"
 googleAnalytics = ""
@@ -33,7 +33,7 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
     MathJaxVersion = "2.7.1"
 
     [params.logo]
-    url = "Home-icon.png"
+    url = "icon.png"
     width = 50
     height = 50
     alt = "Logo"

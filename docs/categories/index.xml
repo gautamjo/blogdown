@@ -2,20 +2,20 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on Hello there!</title>
-    <link>/blogdown-hugo-website/categories/</link>
+    <link>https://gigaelectron.github.io/blogdown-hugo-website/categories/</link>
     <description>Recent content in Categories on Hello there!</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     
-	<atom:link href="/blogdown-hugo-website/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://gigaelectron.github.io/blogdown-hugo-website/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Data Science</title>
-      <link>/blogdown-hugo-website/categories/data-science/</link>
+      <link>https://gigaelectron.github.io/blogdown-hugo-website/categories/data-science/</link>
       <pubDate>Thu, 05 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blogdown-hugo-website/categories/data-science/</guid>
+      <guid>https://gigaelectron.github.io/blogdown-hugo-website/categories/data-science/</guid>
       <description></description>
     </item>
     

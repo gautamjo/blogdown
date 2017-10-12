@@ -83,7 +83,7 @@ library(DT)
 
 ```{r}
 # set directory
-setwd("/Users/gautamjoshi/Desktop/R_std")
+setwd("/Users/gautamjoshi/Desktop/hugo/blogdown-hugo/content/post")
 # load data
 mdata <- read.csv("movie_metadata.csv")
 ```

@@ -1,0 +1,850 @@
+---
+title: White Wine Quality
+author: Gautam Joshi
+date: '2017-11-14'
+slug: white-wine-quality
+categories:
+  - Data Science
+  - Exploratory Data Analysis
+tags:
+  - wine quality
+  - data science
+  - EDA
+---
+
+<body style = "font-family:Georgia">
+
+```{r setup, include=FALSE, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
+```
+
+Loading libraries
+
+```{r echo = TRUE}
+library(tidyverse)
+library(plotly)
+library(formattable)
+library(DT)
+library(RColorBrewer)
+library(stringr)
+```
+
+
+```{r}
+setwd("/Users/gautamjoshi/Desktop/R_std")
+data <- read.csv('wineQualityWhites.csv')
+```
+
+Sample data
+
+```{r}
+data%>%
+  head(20) %>%
+  formattable() %>%
+  as.datatable(options = list(scrollX='auto'))
+```
+
+
+Checking dimensions and features.
+
+
+```{r}
+# checking dimensions
+d <- dim(data)
+cat(d[1], "Items\n", d[2], "Fields")
+cat("\n\n")
+cat("Names feature set:\n")
+# checking categorical and quantitive features
+var_type <- split(names(data), sapply(data, function(x) paste(class(x), collapse = " ")))
+var_type  
+```
+
+
+Structure
+
+
+```{r}
+str(data)
+```
+
+
+summary
+
+```{r}
+summary(data)
+```
+
+
+<h3> <span style = "color: turquoise"> Description of attributes: </span></h3>
+<ul>
+<li>fixed acidity: most acids involved with wine or fixed or nonvolatile (do not evaporate readily)</li>
+
+<li>volatile acidity: the amount of acetic acid in wine, which at too high of levels can lead to an unpleasant, vinegar taste</li>
+
+<li>citric acid: found in small quantities, citric acid can add ‘freshness’ and flavor to wines</li>
+
+<li>residual sugar: the amount of sugar remaining after fermentation stops, it’s rare to find wines with less than 1 gram/liter and wines with greater than 45 grams/liter are considered sweet</li>
+
+<li>chlorides: the amount of salt in the wine</li>
+
+<li>free sulfur dioxide: the free form of SO2 exists in equilibrium between molecular SO2 (as a dissolved gas) and bisulfite ion; it prevents microbial growth and the oxidation of wine</li>
+
+<li>total sulfur dioxide: amount of free and bound forms of S02; in low concentrations, SO2 is mostly undetectable in wine, but at free SO2 concentrations over 50 ppm, SO2 becomes evident in the nose and taste of wine</li>
+
+<li>density: the density of water is close to that of water depending on the percent alcohol and sugar content</li>
+
+<li>pH: describes how acidic or basic a wine is on a scale from 0 (very acidic) to 14 (very basic); most wines are between 3-4 on the pH scale</li>
+
+<li>sulphates: a wine additive which can contribute to sulfur dioxide gas (S02) levels, wich acts as an antimicrobial and antioxidant</li>
+
+<li>alcohol: the percent alcohol content of the wine</li>
+
+<li>quality (score between 0 and 10)</li>
+</ul>
+
+Setting up custom functions and styles
+
+```{r echo=T}
+# setting up plotly label, axis and text customizations
+f1 <- list(
+  family = "Old Standard TT, serif",
+  size = 14,
+  color = "grey"
+)
+f2 <- list(
+  family = "Old Standard TT, serif",
+  size = 10,
+  color = "black"
+)
+a <- list(
+  titlefont = f1,
+  showticklabels = T,
+  tickangle = -45,
+  tickfont = f2
+)
+
+m <- list(
+  l = 50,
+  r = 50,
+  b = 100,
+  t = 100,
+  pad = 4
+)
+
+# simple histogram
+hist_plot <- function(x, bwidth, 
+                      xlabel, title, 
+                      fill = NULL, 
+                      color = NULL){
+  if(is.null(fill)) fill <- 'orange'
+  if(is.null(color)) color <- 'black'
+  
+  hp <- ggplot(data = data, mapping = aes(x = x))
+  gp <- hp + geom_histogram(binwidth = bwidth, 
+                            fill = fill, 
+                            color = color,
+                            size = 0.2,
+                            alpha = 0.7,
+                            show.legend = F) +
+    xlab(xlabel) +
+    ggtitle(title) +
+    theme_minimal() +
+    theme(legend.position = 'none',
+          plot.title = element_text(family = 'Georgia',
+                                    color = 'darkgrey',
+                                    size = 14))
+  
+  ggplotly(gp) %>%
+    layout(margin = m,
+           xaxis = a,
+           yaxis = a)
+                      }
+```
+
+
+
+<h3><span style = "color : turquoise"> Univariate Analysis</span></h3>
+In this section I am going to explore distributions for features such as quality, residual sugar, volatitle acidity, pH and more.
+
+<span style = 'color : tomato'>Plotting distribution for quality</span>
+
+```{r}
+# setting up random color
+rand_color = sample(brewer.pal(11, 'Spectral'), 1)
+
+# plotting a histogram of quality using the custom
+# hist_plot fucntion created earlier
+hist_plot(x = data$quality, bwidth = 1,
+          xlabel = 'Quality', 
+          title = 'Histogram of Wine Quality',
+          fill = rand_color,
+          color = 'black')
+```
+
+
+```{r}
+# summary of quality
+summary(data$quality)  
+```
+
+
+
+<span style = 'color : tomato'>Plotting distribution of volatile acidity</span>
+
+
+
+```{r}
+# plotting a histogram of volatile acidity
+hist_plot(data$volatile.acidity,
+          bwidth = 0.01,
+          xlabel = 'Volatile Acidity',
+          title = 'Histogram of Volatile Acidity in Wine',
+          fill = rand_color,
+          color = 'black')
+```
+
+
+
+```{r}
+# summary of volatile acidity
+summary(data$volatile.acidity)
+```
+
+
+<span style = 'color : tomato'>Plotting distribution of pH</span>
+
+```{r}
+# plotting a histogram of ph
+hist_plot(data$pH, 
+          bwidth = 0.01,
+          xlabel = 'pH',
+          title = 'Histogram of pH in Wine',
+          fill = rand_color,
+          color = 'black')
+```
+
+
+
+```{r}
+# summary of pH
+summary(data$pH)
+```
+
+
+<span style = 'color : tomato'>Plotting distribution of total sulphur dioxide</span>
+
+
+```{r}
+# plotting histogram of sulfur dioxide in wine 
+hist_plot(x = data$total.sulfur.dioxide,
+          bwidth = 5, 
+          xlabel = 'Total Sulfur Dioxide',
+          title = 'Histogram of Total Sulfur Dioxide in Wine',
+          fill = rand_color,
+          color = 'black')
+```
+
+
+
+```{r}
+# summary of total sulfur dioxide
+summary(data$total.sulfur.dioxide)
+```
+
+<span style = 'color : tomato'>Plotting distribution of alcohol</span>
+
+```{r}
+# plotting histogram of alcohol
+hist_plot(data$alcohol, 
+          bwidth = 0.1, 
+          xlabel = 'Alcohol',
+          title = 'Histogram of Alcohol in Wine',
+          fill = rand_color,
+          color = 'black')
+```
+
+
+
+```{r}
+# summary of alcohol
+summary(data$alcohol)
+```
+
+
+<span style = 'color : tomato'>Plotting distribution of residual sugar </span>
+
+```{r}
+# plotting histogram of residual sugar 
+hist_plot(data$residual.sugar,
+          bwidth = 0.5,
+          xlabel = 'Residual Sugar',
+          title = 'Histogram of Residual Sugar in Wine',
+          fill = rand_color,
+          color = 'black')
+```
+
+
+
+```{r}
+# summary of residual sugar 
+summary(data$residual.sugar)
+```
+
+<span style = 'color:tomato'>Plotting distribution of chlorides</span>
+
+```{r}
+# plotting histogram of chlorides
+hist_plot(data$chlorides,
+          bwidth = 0.002,
+          xlabel = 'Chlorides',
+          title = 'Histogram of Chlorides in Wine',
+          fill = rand_color,
+          color = 'black')
+```
+
+
+
+```{r}
+# summary of chlorides
+summary(data$chlorides)
+```
+
+
+<span style = 'color : tomato'>Plotting distribution of density</span>
+
+```{r}
+# plotting histogram of density
+hist_plot(data$density,
+          bwidth = 0.0005,
+          xlabel = 'Density',
+          title = 'Histogram of Density in Wine',
+          fill = rand_color,
+          color = 'black') 
+```
+
+
+
+```{r}
+# summary of density
+summary(data$density)
+```
+
+
+<span style = 'color:tomato'>Plotting distribution of sulphates</span>
+
+```{r}
+# plotting histogram of sulphates
+hist_plot(data$sulphates,
+          bwidth = 0.01,
+          xlabel = 'Sulphates',
+          title = 'Histogram of Sulphates in Wine',
+          fill = rand_color,
+          color = 'black')
+```
+
+
+```{r}
+# summary of sulphates
+summary(data$sulphates)
+```
+
+
+<h3><span style = 'color:turquoise'>Bivariate Analysis<span></h3>
+In this section I will check for trends and correlations between features. Comparing alcohol content according to wine quality seems like a interesting comparision to begin with.
+
+First, i'll create custom function that I am going to use in this section.
+
+```{r echo=T}
+box_plot <- function(x, y, xlabel, ylabel, title){
+  gp <- ggplot(data = data, aes(x = x, y = y, fill = factor(quality)))
+  bp <- gp + geom_boxplot(show.legend = F,
+                          alpha = 0.7) +
+    stat_summary(fun.y = mean, geom = 'point',
+                 shape = 23, show.legend = F) +
+    xlab(xlabel) +
+    ylab(ylabel) +
+    ggtitle(title) +
+    theme_minimal() +
+    theme(legend.position = 'none',
+          plot.title = element_text(family = 'Georgia',
+                                    size = 14,
+                                    color = 'darkgrey')) +
+    scale_fill_brewer(palette = 'Spectral') +
+    coord_flip()
+  
+  ggplotly(bp) %>%
+    layout(margin = m,
+           xaxis = a,
+           yaxis = a)
+}
+
+scatter_plot <- function(x, y, xlabel, ylabel, title, alpha = NULL){
+  if(is.null(alpha)) alpha <- 0.5
+  gp <- ggplot(data = data, aes(x = x, y = y))
+  sp <- gp + geom_jitter(shape = 21,
+                         alpha = alpha,
+                         stroke = 0.2) +
+    xlab(xlabel) +
+    ylab(ylabel) +
+    ggtitle(title) +
+    theme_minimal() +
+    theme(plot.title = element_text(family = 'Georgia',
+                                    size = 14,
+                                    color = 'darkgrey'))
+  
+  ggplotly(sp) %>%
+    layout(margin = m, 
+           xaxis = a,
+           yaxis = a)
+}
+```
+
+
+<span style = 'color:tomato'>Plotting distribution of alcohol on quality wise basis</span>
+
+```{r fig.height = 4, fig.width = 10, fig.align = 'center'}
+# plotting a frequency plot alcohol on a quality wise basis
+data %>%
+  ggplot(aes(x = alcohol, color = factor(quality))) +
+  geom_freqpoly(binwidth = 0.1,
+                 size = 0.7, 
+                 show.legend = F) +
+  facet_grid(~factor(quality), scales = 'free') +
+  theme_minimal() +
+  scale_color_manual(values = sample(brewer.pal(8, 'Dark2'), 7))
+```
+
+
+
+Checking of spread of alcohol values across all quality of wines. 
+
+```{r}
+# plotting box plot for alcohol content of wines based on quality
+box_plot(x = factor(data$quality), 
+         y = data$alcohol,
+         xlabel = 'Quality',
+         ylabel = 'Alcohol',
+         title = 'Boxplot for Alcohol content on basis of Quality')
+```
+
+
+The table below shows the summary of alcohol content based on wine quality
+
+```{r}
+# generating random colors
+sample_color <- brewer.pal(11, 'Spectral')
+# creating a summary table of alcohol content in wine based on its 
+# quality
+alcohol_quality <- data %>%
+  group_by(quality) %>%
+  summarise(count = n(),
+            mean_alcohol_content = round(mean(alcohol, na.rm = T), 2),
+            median_alcohol_content = median(alcohol, na.rm = T),
+            min_alcohol_content = min(alcohol),
+            max_alcohol_content = max(alcohol)) 
+
+alcohol_quality %>%
+  formattable(list(count = color_bar(sample(sample_color, 1)), 
+                   mean_alcohol_content = color_tile('transparent', sample(sample_color, 1)),
+                   median_alcohol_content = color_tile('transparent', sample(sample_color, 1)),
+                   min_alcohol_content = color_tile(sample(sample_color, 1), 'transparent'),
+                   max_alcohol_content = color_tile('transparent', sample(sample_color, 1)))) %>%
+  as.datatable()
+```
+
+
+Visualizing the table above. The plot shows a scatter plot of quality vs alcohol with added summary of mean(red line), median(blue line) and 25th and 75th quantile (dotted lines). 
+  
+  
+
+```{r}
+qual_alc_line <- data %>%
+  ggplot(aes(x = quality, y = alcohol)) +
+  geom_jitter(alpha = 0.3, shape = 21, 
+              stroke = 0.2) +
+  stat_summary(geom = 'line', 
+               fun.y = mean, 
+               color = 'red') + 
+  stat_summary(geom = 'line', 
+               fun.y = median, 
+               color = 'blue', 
+               linetype = 1) +
+  stat_summary(geom = 'line',
+               fun.y = quantile,
+               fun.args = list(prob = .25),
+               linetype = 3,
+               color = sample(sample_color, 1)) +
+  stat_summary(geom = 'line', 
+               fun.y = quantile,
+               fun.args = list(prob = .75),
+               linetype = 3,
+               color = sample(sample_color, 1)) +
+  xlab('Quality') +
+  ylab('Alcohol') +
+  ggtitle('Scatter plot for Quality vs Alcohol with added summary lines') +
+  theme_minimal() +
+  theme(plot.title = element_text(family = 'Georgia',
+                                  size = 14,
+                                  color = 'darkgrey'))
+
+ggplotly(qual_alc_line) %>%
+  layout(margin = m,
+         xaxis = a,
+         yaxis = a)
+```
+
+
+
+There seems to be a postive realtionship between quality of wine and alcohol content. Better quality wines seem to have more alcohol content. 
+
+Now, lets check <span style = 'color:tomato'>correlation between density and alcohol</span>
+
+```{r}
+# plotting scatter plot for Density Vs Alcohol
+scatter_plot(x = data$density, 
+             y = data$alcohol,
+             xlabel = 'Density',
+             ylabel = 'Alcohol',
+             title = 'Scatter plot for Density vs Alcohol',
+             alpha = 0.3)
+
+
+```
+
+
+```{r echo=T}
+# checking pearson's r for density vs alcohol
+cor(data$density, data$alcohol, method = 'pearson')
+```
+
+Density seems to show a strong negative correlation with alcohol. Meaning, wines with less alcohol content are more dense. Lets also check how are density values dispersed across different quality of wines.
+
+```{r}
+# plotting box plot for Quality by Density
+box_plot(factor(data$quality),data$density,
+         'Quality',
+         'Density',
+         'Box plot for Quality by Density')
+```
+
+
+
+Checking frequency of density separated by quality of wine
+
+```{r}
+# creating custom palette for darker lines
+dark_pal <- brewer.pal(8, 'Dark2')
+
+# plotting frequency plot of density for different quality of wines
+den_freq <- data %>%
+  ggplot(aes(x = density, color = factor(quality))) +
+  geom_freqpoly(binwidth = 0.001, show.legend = F) +
+  xlab('Density') +
+  ggtitle('Frequency plot of Density separated by Quality of Wine') +
+  theme_minimal() +
+  theme(legend.position = 'none',
+        plot.title = element_text(family = 'Georgia',
+                                  size = 14,
+                                  color = 'darkgrey')) +
+  scale_color_manual(values = sample(dark_pal, 7))
+
+ggplotly(den_freq) %>%
+  layout(margin = m,
+         xaxis = a,
+         yaxis = a)
+```
+
+
+
+Better quality wines show less density. The table below summarises the range of density for different quality of wines. 
+
+```{r}
+# creating a table to show density value summary
+data %>%
+  select(quality, density) %>%
+  group_by(quality) %>%
+  summarise(mean_density = mean(density),
+            median_density = median(density),
+            min_density = min(density),
+            max_density = max(density)) %>%
+  formattable(list(mean_density = color_tile('transparent', sample(sample_color, 1)),
+                   median_density = color_tile('transparent', sample(sample_color, 1)),
+                   min_density = color_tile(sample(sample_color, 1), 'transparent'),
+                   max_density = color_tile('transparent', sample(sample_color, 1)))) %>%
+  as.datatable()
+```
+
+
+The line plot below visualises the quality vs density quite well and shows clearly that better quality wines are less dense. (red line is mean desnity, blue line is median density, dotted lines are 25th quantile and 75th quantile)
+
+
+```{r}
+# plotting a line graph to visualise density trends with respect to quality
+den_stat <- data %>%
+  ggplot(aes(x = quality, y = density)) +
+  stat_summary(fun.y = mean, geom = 'line', 
+               color = 'red') +
+  stat_summary(fun.y = median, geom = 'line',
+               color = 'blue') +
+  stat_summary(fun.y = quantile, geom = 'line',
+               fun.args = list(prob = .25),
+               linetype = 3,
+               color = sample(sample_color, 1)) +
+  stat_summary(geom = 'line', 
+               fun.y = quantile,
+               fun.args = list(prob = .75),
+               linetype = 3,
+               color = sample(sample_color, 1)) +
+  xlab('Quality') +
+  ylab('Density') +
+  theme_minimal()
+
+ggplotly(den_stat) %>%
+  layout(margin = m,
+         xaxis = a,
+         yaxis = a)
+  
+```
+
+
+Now lets move on to examine <span style = 'color:tomato'>correlation between Alcohol vs Residual Sugar.</span>
+
+```{r}
+# plotting a scatter plot for alcohol vs residual sugar
+scatter_plot(x = data$residual.sugar,
+             y = data$alcohol,
+             'Residual Sugar',
+             'Alcohol',
+             'Scatter plot for Residual Sugar vs Alcohol',
+             alpha = 0.3)
+```
+
+
+
+
+
+```{r echo=T}
+# pearson's r for alcohol vs density
+cor(data$residual.sugar, data$alcohol, method = 'pearson')
+```
+
+Residual sugar and density seem to show a statistically meaningfull negative correlation between them. In other words, as sugar content in wines increases alcohol content decreases. 
+
+
+Lets check how residual sugar values are spread across different quality of wines.
+
+```{r}
+# plotting a box plot of quality vs residual sugar
+box_plot(data$quality, 
+         data$residual.sugar,
+         'Quality',
+         'Residual Sugar',
+         'Box plot for Quality vs Residual Sugar')
+```
+
+
+Summarising residual sugar values by quality in a datatable.
+
+
+```{r}
+data %>%
+  select(quality, residual.sugar) %>%
+  group_by(quality) %>%
+  summarise(mean_sugar = mean(residual.sugar),
+            median_sugar = median(residual.sugar),
+            min_sugar = min(residual.sugar),
+            max_sugar = max(residual.sugar)) %>%
+  formattable(list(mean_sugar = color_tile('transparent', sample(sample_color, 1)),
+                   median_sugar = color_tile('transparent', sample(sample_color, 1)),
+                   min_sugar = color_tile(sample(sample_color, 1), 'transparent'),
+                   max_sugar = color_tile('transparent', sample(sample_color, 1)))) %>%
+  as.datatable()
+```
+
+
+
+```{r}
+# plotting a line graph to visualise residual sugar trends 
+# with respect to quality
+den_stat <- data %>%
+  ggplot(aes(x = quality, y = residual.sugar)) +
+  stat_summary(fun.y = mean, geom = 'line', 
+               color = 'red') +
+  stat_summary(fun.y = median, geom = 'line',
+               color = 'blue') +
+  stat_summary(fun.y = quantile, geom = 'line',
+               fun.args = list(prob = .25),
+               linetype = 3,
+               color = sample(sample_color, 1)) +
+  stat_summary(geom = 'line', 
+               fun.y = quantile,
+               fun.args = list(prob = .75),
+               linetype = 3,
+               color = sample(sample_color, 1)) +
+  xlab('Quality') +
+  ylab('Residual Sugar') +
+  theme_minimal()
+
+ggplotly(den_stat) %>%
+  layout(margin = m,
+         xaxis = a,
+         yaxis = a)
+```
+
+
+Residual Sugar value trends decline as the quality of wine increases. Meaning that Better quality wines seem to be less sweeter. 
+
+Now lets check if <span style = 'color:tomato'>alcohol and total sulfur dioxide share a relationship with each other.</span>
+
+```{r}
+scatter_plot(x = data$total.sulfur.dioxide,
+             y = data$alcohol,
+             'Total Sulfur Dioxide',
+             'Alcohol',
+             'Scatter plot for Alcohol vs Total Sulfur Dioxide',
+             alpha = 0.3)
+```
+
+
+```{r echo=T}
+# pearson's r for alcohol vs total sulfur dioxide
+cor(data$total.sulfur.dioxide, data$alcohol, method = 'pearson')
+```
+
+
+
+Total sulfur dioxide and alcohol show a meaningful negative relationship between each other. Wines with more alcohol seem to have lesser total sulfur dioxide.
+
+Lets check how does quality of wine affect total sulfur dioxide content. We can see how total so2 is distributed for each quality of wine through the frequency plot.
+
+```{r}
+so2 <- data %>%
+  ggplot(aes(x = total.sulfur.dioxide, color = factor(quality))) +
+  geom_freqpoly(binwidth = 10,
+                show.legend = F) +
+  ggtitle('Frequency plot of Total SO2 separated by Quality of Wine') +
+  theme_minimal() +
+  theme(legend.position = 'none',
+        plot.title = element_text(family = 'Georgia',
+                                  size = 14,
+                                  color = 'darkgrey')) +
+  scale_color_manual(values = sample(dark_pal, 7))
+
+ggplotly(so2) %>%
+  layout(margin = m,
+         xaxis = a,
+         yaxis = a)
+```
+
+
+
+Checking range of Total SO2 values for each quality of wine.
+
+
+```{r}
+# plotting a box plot of quality vs residual sugar
+box_plot(data$quality, 
+         data$total.sulfur.dioxide,
+         'Quality',
+         'Total Sulfur Dioxide',
+         'Box plot for Quality vs Total Sulfur Dioxide')
+```
+
+
+
+Summarising the mean, median, min, max values for Total SO2 on wine quality basis.
+
+```{r}
+data %>%
+  select(quality, total.sulfur.dioxide) %>%
+  group_by(quality) %>%
+  summarise(mean_total_SO2 = mean(total.sulfur.dioxide),
+            median_total_SO2 = median(total.sulfur.dioxide),
+            min_total_SO2 = min(total.sulfur.dioxide),
+            max_total_SO2 = max(total.sulfur.dioxide)) %>%
+  formattable(list(mean_total_SO2 = color_tile('transparent', sample(sample_color, 1)),
+                   median_total_SO2 = color_tile('transparent', sample(sample_color, 1)),
+                   min_total_SO2 = color_tile(sample(sample_color, 1), 'transparent'),
+                   max_total_SO2 = color_tile('transparent', sample(sample_color, 1)))) %>%
+  as.datatable()
+```
+
+
+
+<h3>Summary</h3>
+Density and Alcohol showed the strongest correlation among all other variables. Their r score was -0.78. 
+
+```{r}
+corr <- ggplot(data = data, 
+       aes(x = density, y = alcohol, fill = factor(quality))) +
+   geom_point(alpha = 0.5, position = 'jitter', size = 2, 
+              shape = 21, stroke = .2) +
+   coord_cartesian(xlim=c(min(data$density),1.005), ylim=c(8,15)) +
+   scale_fill_brewer(type='qual') +
+   xlab('Density') +
+   ylab('Alcohol') +
+   ggtitle('Density vs. Alcohol correlation by Quality') +
+  theme_minimal() +
+  theme(legend.position = 'none',
+        plot.title = element_text(family = 'Georgia',
+                                  size = 14,
+                                  color = 'darkgrey'))
+ggplotly(corr) %>%
+  layout(margin = m,
+         xaxis = a, 
+         yaxis = a)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

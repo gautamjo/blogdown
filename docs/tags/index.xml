@@ -2,21 +2,48 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Hello there!</title>
-    <link>https://gigaelectron.github.io/blogdown/tags/</link>
+    <link>/blogdown/tags/</link>
     <description>Recent content in Tags on Hello there!</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 05 Oct 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 14 Nov 2017 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://gigaelectron.github.io/blogdown/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/blogdown/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>Data Science</title>
+      <link>/blogdown/tags/data-science/</link>
+      <pubDate>Tue, 14 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/blogdown/tags/data-science/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Eda</title>
+      <link>/blogdown/tags/eda/</link>
+      <pubDate>Tue, 14 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/blogdown/tags/eda/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Movies Data Science Imdb.com Kaggle.com</title>
-      <link>https://gigaelectron.github.io/blogdown/tags/movies-data-science-imdb.com-kaggle.com/</link>
+      <link>/blogdown/tags/movies-data-science-imdb.com-kaggle.com/</link>
       <pubDate>Thu, 05 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://gigaelectron.github.io/blogdown/tags/movies-data-science-imdb.com-kaggle.com/</guid>
+      <guid>/blogdown/tags/movies-data-science-imdb.com-kaggle.com/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Wine Quality</title>
+      <link>/blogdown/tags/wine-quality/</link>
+      <pubDate>Tue, 14 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/blogdown/tags/wine-quality/</guid>
       <description></description>
     </item>
     

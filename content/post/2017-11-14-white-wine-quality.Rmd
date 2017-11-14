@@ -449,7 +449,7 @@ alcohol_quality %>%
                    median_alcohol_content = color_tile('transparent', sample(sample_color, 1)),
                    min_alcohol_content = color_tile(sample(sample_color, 1), 'transparent'),
                    max_alcohol_content = color_tile('transparent', sample(sample_color, 1)))) %>%
-  as.datatable()
+  as.datatable(options = list(scrollX='400px'))
 ```
 
 

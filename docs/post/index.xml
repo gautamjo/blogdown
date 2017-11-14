@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on Hello there!</title>
-    <link>/blogdown/post/</link>
+    <link>https://gigaelectron.github.io/blogdown/post/</link>
     <description>Recent content in Posts on Hello there!</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 05 Oct 2017 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/blogdown/post/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://gigaelectron.github.io/blogdown/post/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Understanding Movies through Data</title>
-      <link>/blogdown/2017/10/05/new-post/</link>
+      <link>https://gigaelectron.github.io/blogdown/2017/10/05/new-post/</link>
       <pubDate>Thu, 05 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blogdown/2017/10/05/new-post/</guid>
+      <guid>https://gigaelectron.github.io/blogdown/2017/10/05/new-post/</guid>
       <description>Prelude: What makes movies good or bad? Is it our emotional response towards them? Is it the critical reviews or the scores? Is it the association of popular directors or actors? Is it the amount they gross at the box office? What is it really that describes their success or failure? I have pondered over such questions many a times but never really got around to acknowledge them.</description>
     </item>
     

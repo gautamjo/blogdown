@@ -2,29 +2,29 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on Hello there!</title>
-    <link>https://gigaelectron.github.io/blogdown/categories/</link>
+    <link>/blogdown/categories/</link>
     <description>Recent content in Categories on Hello there!</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     
-	<atom:link href="https://gigaelectron.github.io/blogdown/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/blogdown/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Data Science</title>
-      <link>https://gigaelectron.github.io/blogdown/categories/data-science/</link>
+      <link>/blogdown/categories/data-science/</link>
       <pubDate>Thu, 05 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://gigaelectron.github.io/blogdown/categories/data-science/</guid>
+      <guid>/blogdown/categories/data-science/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Exploratory Data Analysis</title>
-      <link>https://gigaelectron.github.io/blogdown/categories/exploratory-data-analysis/</link>
+      <link>/blogdown/categories/exploratory-data-analysis/</link>
       <pubDate>Tue, 14 Nov 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://gigaelectron.github.io/blogdown/categories/exploratory-data-analysis/</guid>
+      <guid>/blogdown/categories/exploratory-data-analysis/</guid>
       <description></description>
     </item>
     

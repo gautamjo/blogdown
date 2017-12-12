@@ -1,0 +1,163 @@
+---
+title: US flights cancellations in 2008
+author: Gautam Joshi
+date: '2017-12-12'
+slug: us-flights-cancellations-in-2008
+categories:
+  - Exploratory Data Analysis
+  - d3.js
+tags:
+  - EDA
+  - d3.js
+---
+
+
+<body style = "font-family:Georgia">
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = F, message = F)
+```
+
+
+```{r}
+# libraries needed
+library(tidyverse)
+library(formattable)
+library(RColorBrewer)
+library(stringr)
+library(DT)
+library(scales)
+library(gridExtra)
+```
+
+
+```{r}
+# set directory
+setwd("/Users/gautamjoshi/Desktop/R_std")
+# load data
+flights <- read_csv('2008.csv')
+```
+
+
+Sample Data
+
+
+```{r}
+flights %>%
+  head(10) %>%
+  formattable(align = "l") %>% 
+  datatable(options = list(scrollX = "400px"))
+```
+
+
+
+Updating column Month with month names and DayOfWeek with day names.
+
+```{r echo=T}
+newflights <- flights
+
+newflights$DayOfWeek[newflights$DayOfWeek == 1] = 'Monday'
+newflights$DayOfWeek[newflights$DayOfWeek == 2] = 'Tuesday'
+newflights$DayOfWeek[newflights$DayOfWeek == 3] = 'Wednesday'
+newflights$DayOfWeek[newflights$DayOfWeek == 4] = 'Thursday'
+newflights$DayOfWeek[newflights$DayOfWeek == 5] = 'Friday'
+newflights$DayOfWeek[newflights$DayOfWeek == 6] = 'Saturday'
+newflights$DayOfWeek[newflights$DayOfWeek == 7] = 'Sunday'
+
+newflights$Month[newflights$Month == 1] = 'January'
+newflights$Month[newflights$Month == 2] = 'February'
+newflights$Month[newflights$Month == 3] = 'March'
+newflights$Month[newflights$Month == 4] = 'April'
+newflights$Month[newflights$Month == 5] = 'May'
+newflights$Month[newflights$Month == 6] = 'June'
+newflights$Month[newflights$Month == 7] = 'July'
+newflights$Month[newflights$Month == 8] = 'August'
+newflights$Month[newflights$Month == 9] = 'September'
+newflights$Month[newflights$Month == 10] =  'October'
+newflights$Month[newflights$Month == 11] =  'November'
+newflights$Month[newflights$Month == 12] =  'December'
+```
+
+Creating a dataframe containing count of cancelled flights grouped by Months and Days of Week. Also, arranging the dataframe in chronological order.
+
+```{r echo=T}
+cancelledByMonthDay <- newflights %>%
+  filter(Cancelled == 1) %>%
+  group_by(Month, DayOfWeek) %>%
+  count()
+
+cancelledByMonthDay$Month <- factor(cancelledByMonthDay$Month, 
+                                        levels = month.name)
+cancelledByMonthDay$DayOfWeek <- factor(cancelledByMonthDay$DayOfWeek, 
+                                           levels = c("Sunday", 
+                                                      "Monday", 
+                                                      "Tuesday", 
+                                                      "Wednesday", 
+                                                      "Thursday", 
+                                                      "Friday", 
+                                                      "Saturday"))
+
+colnames(cancelledByMonthDay)[3] <- "Count"
+
+cancelledByMonthDay <- cancelledByMonthDay[order(cancelledByMonthDay$DayOfWeek),]
+cancelledByMonthDay <- arrange(cancelledByMonthDay, Month)
+
+cancelledByMonthDay %>%
+  datatable()
+```
+
+Plotting grouped bar chart to display total annual cancellations separated by months and days of week. Furthermore, this plot is an intital sketch of the final plot that I intend to create with D3.js. 
+
+```{r fig.align="center", fig.width=10}
+cancelledByMonthDay %>%
+  ggplot(aes(x = Month, y = Count)) +
+  geom_bar(aes(fill = DayOfWeek), stat = "summary",
+           position = "dodge",
+           color = "white",
+           width = 0.7,
+           size = 0.3) +
+  ylab("Cancellations") +
+  ggtitle("Total Cancelled flights in 2008 by Months and Days of Week") +
+  theme_minimal() +
+  guides(fill=guide_legend(title="Day Of Week")) +
+  theme(axis.text.x = element_text(size = 6, 
+                                   angle = 45),
+        axis.text.y = element_text(size = 6),
+        plot.title = element_text(family = "Georgia", 
+                                  size = 10,
+                                  color = "darkgrey",
+                                  face = "bold",
+                                  hjust = 0.5),
+        legend.key.size = unit(.2, "cm"),
+        legend.title = element_text(size = 6),
+        legend.text = element_text(size = 4),
+        legend.position = c(0.92, 0.9)) +
+  scale_fill_brewer(palette = "YlGnBu")
+```
+
+
+Reshaping dataframe for D3.js ingestion.  
+
+
+```{r echo=T}
+cancelledByMonthDay$Sunday <- cancelledByMonthDay$Count[cancelledByMonthDay$DayOfWeek == "Sunday"]
+cancelledByMonthDay$Monday <- cancelledByMonthDay$Count[cancelledByMonthDay$DayOfWeek == "Monday"]
+cancelledByMonthDay$Tuesday <- cancelledByMonthDay$Count[cancelledByMonthDay$DayOfWeek == "Tuesday"]
+cancelledByMonthDay$Wednesday <- cancelledByMonthDay$Count[cancelledByMonthDay$DayOfWeek == "Wednesday"]
+cancelledByMonthDay$Thursday <- cancelledByMonthDay$Count[cancelledByMonthDay$DayOfWeek == "Thursday"]
+cancelledByMonthDay$Friday <- cancelledByMonthDay$Count[cancelledByMonthDay$DayOfWeek == "Friday"]
+cancelledByMonthDay$Saturday <- cancelledByMonthDay$Count[cancelledByMonthDay$DayOfWeek == "Saturday"]
+cancelledByMonthDay$Month <- unique(cancelledByMonthDay$Month)
+cancelledByMonthDay$DayOfWeek <- NULL
+cancelledByMonthDay$Count <- NULL
+cancelled_df <- unique(cancelledByMonthDay)
+```
+
+
+Writing the reshaped dataframe to csv.
+
+```{r echo=T}
+write_csv(cancelled_df, "total_cancellations_2008.csv")
+```
+
+</body>

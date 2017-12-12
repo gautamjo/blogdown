@@ -4,7 +4,7 @@ title = "Hello there!"
 theme = "hugo-lithium-theme"
 publishDir = "docs"
 googleAnalytics = ""
-disqusShortname = ""
+disqusShortname = "gigaelectron.disqus.com"
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 
 [permalinks]
@@ -15,10 +15,10 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
     url = "/about/"
 [[menu.main]]
     name = "GitHub"
-    url = "https://github.com/rstudio/blogdown"
+    url = "https://github.com/gigaelectron"
 [[menu.main]]
     name = "Twitter"
-    url = "https://twitter.com/rstudio"
+    url = "https://twitter.com/Gautamistic"
 
 [params]
     description = "Gautam's website."

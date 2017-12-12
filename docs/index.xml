@@ -2,30 +2,30 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Hello there!</title>
-    <link>/blogdown/</link>
+    <link>https://gigaelectron.github.io/blogdown/</link>
     <description>Recent content on Hello there!</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 05 Oct 2017 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/blogdown/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://gigaelectron.github.io/blogdown/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Understanding Movies through Data</title>
-      <link>/blogdown/2017/10/05/new-post/</link>
+      <link>https://gigaelectron.github.io/blogdown/2017/10/05/new-post/</link>
       <pubDate>Thu, 05 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blogdown/2017/10/05/new-post/</guid>
+      <guid>https://gigaelectron.github.io/blogdown/2017/10/05/new-post/</guid>
       <description>Prelude: What makes movies good or bad? Is it our emotional response towards them? Is it the critical reviews or the scores? Is it the association of popular directors or actors? Is it the amount they gross at the box office? What is it really that describes their success or failure? I have pondered over such questions many a times but never really got around to acknowledge them.</description>
     </item>
     
     <item>
       <title>White Wine Quality</title>
-      <link>/blogdown/2017/11/14/white-wine-quality/</link>
+      <link>https://gigaelectron.github.io/blogdown/2017/11/14/white-wine-quality/</link>
       <pubDate>Tue, 14 Nov 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blogdown/2017/11/14/white-wine-quality/</guid>
+      <guid>https://gigaelectron.github.io/blogdown/2017/11/14/white-wine-quality/</guid>
       <description>Loading libraries
 library(tidyverse) library(plotly) library(formattable) library(DT) library(RColorBrewer) library(stringr) Sample data
  {&#34;x&#34;:{&#34;filter&#34;:&#34;none&#34;,&#34;data&#34;:[[&#34;1&#34;,&#34;2&#34;,&#34;3&#34;,&#34;4&#34;,&#34;5&#34;,&#34;6&#34;,&#34;7&#34;,&#34;8&#34;,&#34;9&#34;,&#34;10&#34;,&#34;11&#34;,&#34;12&#34;,&#34;13&#34;,&#34;14&#34;,&#34;15&#34;,&#34;16&#34;,&#34;17&#34;,&#34;18&#34;,&#34;19&#34;,&#34;20&#34;],[&#34;1&#34;,&#34;2&#34;,&#34;3&#34;,&#34;4&#34;,&#34;5&#34;,&#34;6&#34;,&#34;7&#34;,&#34;8&#34;,&#34;9&#34;,&#34;10&#34;,&#34;11&#34;,&#34;12&#34;,&#34;13&#34;,&#34;14&#34;,&#34;15&#34;,&#34;16&#34;,&#34;17&#34;,&#34;18&#34;,&#34;19&#34;,&#34;20&#34;],[&#34;7.0&#34;,&#34;6.3&#34;,&#34;8.1&#34;,&#34;7.2&#34;,&#34;7.2&#34;,&#34;8.1&#34;,&#34;6.2&#34;,&#34;7.0&#34;,&#34;6.3&#34;,&#34;8.1&#34;,&#34;8.1&#34;,&#34;8.6&#34;,&#34;7.9&#34;,&#34;6.6&#34;,&#34;8.3&#34;,&#34;6.6&#34;,&#34;6.3&#34;,&#34;6.2&#34;,&#34;7.4&#34;,&#34;6.5&#34;],[&#34;0.27&#34;,&#34;0.30&#34;,&#34;0.28&#34;,&#34;0.23&#34;,&#34;0.23&#34;,&#34;0.28&#34;,&#34;0.32&#34;,&#34;0.27&#34;,&#34;0.30&#34;,&#34;0.22&#34;,&#34;0.27&#34;,&#34;0.23&#34;,&#34;0.18&#34;,&#34;0.16&#34;,&#34;0.42&#34;,&#34;0.17&#34;,&#34;0.48&#34;,&#34;0.66&#34;,&#34;0.34&#34;,&#34;0.31&#34;],[&#34;0.36&#34;,&#34;0.34&#34;,&#34;0.40&#34;,&#34;0.32&#34;,&#34;0.32&#34;,&#34;0.40&#34;,&#34;0.16&#34;,&#34;0.36&#34;,&#34;0.34&#34;,&#34;0.43&#34;,&#34;0.41&#34;,&#34;0.40&#34;,&#34;0.37&#34;,&#34;0.40&#34;,&#34;0.62&#34;,&#34;0.38&#34;,&#34;0.04&#34;,&#34;0.48&#34;,&#34;0.42&#34;,&#34;0.14&#34;],[&#34;20.70&#34;,&#34;1.60&#34;,&#34;6.90&#34;,&#34;8.50&#34;,&#34;8.50&#34;,&#34;6.90&#34;,&#34;7.00&#34;,&#34;20.70&#34;,&#34;1.60&#34;,&#34;1.50&#34;,&#34;1.45&#34;,&#34;4.20&#34;,&#34;1.20&#34;,&#34;1.50&#34;,&#34;19.25&#34;,&#34;1.50&#34;,&#34;1.10&#34;,&#34;1.20&#34;,&#34;1.10&#34;,&#34;7.50&#34;],[&#34;0.045&#34;,&#34;0.049&#34;,&#34;0.050&#34;,&#34;0.058&#34;,&#34;0.058&#34;,&#34;0.050&#34;,&#34;0.045&#34;,&#34;0.045&#34;,&#34;0.049&#34;,&#34;0.044&#34;,&#34;0.033&#34;,&#34;0.035&#34;,&#34;0.040&#34;,&#34;0.044&#34;,&#34;0.040&#34;,&#34;0.032&#34;,&#34;0.046&#34;,&#34;0.029&#34;,&#34;0.033&#34;,&#34;0.044&#34;],[&#34;45&#34;,&#34;14&#34;,&#34;30&#34;,&#34;47&#34;,&#34;47&#34;,&#34;30&#34;,&#34;30&#34;,&#34;45&#34;,&#34;14&#34;,&#34;28&#34;,&#34;11&#34;,&#34;17&#34;,&#34;16&#34;,&#34;48&#34;,&#34;41&#34;,&#34;28&#34;,&#34;30&#34;,&#34;29&#34;,&#34;17&#34;,&#34;34&#34;],[&#34;170&#34;,&#34;132&#34;,&#34;97&#34;,&#34;186&#34;,&#34;186&#34;,&#34;97&#34;,&#34;136&#34;,&#34;170&#34;,&#34;132&#34;,&#34;129&#34;,&#34;63&#34;,&#34;109&#34;,&#34;75&#34;,&#34;143&#34;,&#34;172&#34;,&#34;112&#34;,&#34;99&#34;,&#34;75&#34;,&#34;171&#34;,&#34;133&#34;],[&#34;1.0010&#34;,&#34;0.9940&#34;,&#34;0.9951&#34;,&#34;0.9956&#34;,&#34;0.9956&#34;,&#34;0.9951&#34;,&#34;0.9949&#34;,&#34;1.0010&#34;,&#34;0.9940&#34;,&#34;0.9938&#34;,&#34;0.9908&#34;,&#34;0.9947&#34;,&#34;0.9920&#34;,&#34;0.9912&#34;,&#34;1.0002&#34;,&#34;0.9914&#34;,&#34;0.9928&#34;,&#34;0.9892&#34;,&#34;0.9917&#34;,&#34;0.9955&#34;],[&#34;3.00&#34;,&#34;3.30&#34;,&#34;3.26&#34;,&#34;3.19&#34;,&#34;3.19&#34;,&#34;3.26&#34;,&#34;3.18&#34;,&#34;3.00&#34;,&#34;3.30&#34;,&#34;3.22&#34;,&#34;2.99&#34;,&#34;3.14&#34;,&#34;3.18&#34;,&#34;3.54&#34;,&#34;2.98&#34;,&#34;3.25&#34;,&#34;3.24&#34;,&#34;3.33&#34;,&#34;3.12&#34;,&#34;3.22&#34;],[&#34;0.45&#34;,&#34;0.49&#34;,&#34;0.44&#34;,&#34;0.40&#34;,&#34;0.40&#34;,&#34;0.44&#34;,&#34;0.47&#34;,&#34;0.45&#34;,&#34;0.49&#34;,&#34;0.45&#34;,&#34;0.56&#34;,&#34;0.53&#34;,&#34;0.63&#34;,&#34;0.52&#34;,&#34;0.67&#34;,&#34;0.55&#34;,&#34;0.36&#34;,&#34;0.39&#34;,&#34;0.53&#34;,&#34;0.50&#34;],[&#34;8.8&#34;,&#34;9.5&#34;,&#34;10.1&#34;,&#34;9.9&#34;,&#34;9.9&#34;,&#34;10.1&#34;,&#34;9.6&#34;,&#34;8.8&#34;,&#34;9.5&#34;,&#34;11.0&#34;,&#34;12.0&#34;,&#34;9.7&#34;,&#34;10.8&#34;,&#34;12.4&#34;,&#34;9.7&#34;,&#34;11.4&#34;,&#34;9.6&#34;,&#34;12.8&#34;,&#34;11.3&#34;,&#34;9.5&#34;],[&#34;6&#34;,&#34;6&#34;,&#34;6&#34;,&#34;6&#34;,&#34;6&#34;,&#34;6&#34;,&#34;6&#34;,&#34;6&#34;,&#34;6&#34;,&#34;6&#34;,&#34;5&#34;,&#34;5&#34;,&#34;5&#34;,&#34;7&#34;,&#34;5&#34;,&#34;7&#34;,&#34;6&#34;,&#34;8&#34;,&#34;6&#34;,&#34;5&#34;]],&#34;container&#34;:&#34;\n \n \n  \n X\n fixed.acidity\n volatile.acidity\n citric.acid\n residual.sugar\n chlorides\n free.sulfur.dioxide\n total.sulfur.dioxide\n density\n pH\n sulphates\n alcohol\n quality\n \n \n&#34;,&#34;options&#34;:{&#34;scrollX&#34;:&#34;auto&#34;,&#34;order&#34;:[],&#34;autoWidth&#34;:false,&#34;orderClasses&#34;:false,&#34;columnDefs&#34;:[{&#34;orderable&#34;:false,&#34;targets&#34;:0}]}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]} Checking dimensions and features.
@@ -34,11 +34,11 @@ library(tidyverse) library(plotly) library(formattable) library(DT) library(RCol
     
     <item>
       <title>About</title>
-      <link>/blogdown/about/</link>
+      <link>https://gigaelectron.github.io/blogdown/about/</link>
       <pubDate>Thu, 05 May 2016 21:48:51 -0700</pubDate>
       
-      <guid>/blogdown/about/</guid>
-      <description>This is a &amp;ldquo;hello world&amp;rdquo; example website for the blogdown package. The theme was forked from @jrutheiser/hugo-lithium-theme and modified by Yihui Xie.</description>
+      <guid>https://gigaelectron.github.io/blogdown/about/</guid>
+      <description>Hello there! Welcome to my little blog! My name is Gautam. I am a writer, autodidactic programmer and an aspiring data scientist.</description>
     </item>
     
   </channel>

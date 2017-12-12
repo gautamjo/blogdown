@@ -4,7 +4,7 @@ title = "Hello there!"
 theme = "hugo-lithium-theme"
 publishDir = "docs"
 googleAnalytics = ""
-disqusShortname = "gigaelectron"
+disqusShortname = ""
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 
 [permalinks]

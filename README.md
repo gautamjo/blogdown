@@ -1,1 +1,1 @@
-# blogdown-hugo-sample-website
+# blogdown-hugo-website

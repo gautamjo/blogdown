@@ -108,7 +108,7 @@ cancelledByMonthDay %>%
 
 Plotting grouped bar chart to display total annual cancellations separated by months and days of week. Furthermore, this plot is an intital sketch of the final plot that I intend to create with D3.js. 
 
-```{r fig.align="center", fig.width=10}
+```{r fig.width=10}
 cancelledByMonthDay %>%
   ggplot(aes(x = Month, y = Count)) +
   geom_bar(aes(fill = DayOfWeek), stat = "summary",

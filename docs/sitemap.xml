@@ -8,7 +8,7 @@
   </url>
   
   <url>
-    <loc>https://gigaelectron.github.io/blogdown/2017/12/12/us-flights-cancellations-in-2008/</loc>
+    <loc>https://gigaelectron.github.io/blogdown/2017/12/12/us-flight-cancellations-in-2008/</loc>
     <lastmod>2017-12-12T00:00:00+00:00</lastmod>
   </url>
   
@@ -28,26 +28,26 @@
   </url>
   
   <url>
-    <loc>https://gigaelectron.github.io/blogdown/categories/d3.js/</loc>
-    <lastmod>2017-12-12T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>https://gigaelectron.github.io/blogdown/tags/d3.js/</loc>
     <lastmod>2017-12-12T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://gigaelectron.github.io/blogdown/categories/data-science/</loc>
-    <lastmod>2017-10-05T00:00:00+00:00</lastmod>
+    <loc>https://gigaelectron.github.io/blogdown/categories/d3.js/</loc>
+    <lastmod>2017-12-12T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://gigaelectron.github.io/blogdown/tags/data-science/</loc>
     <lastmod>2017-11-14T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://gigaelectron.github.io/blogdown/categories/data-science/</loc>
+    <lastmod>2017-10-05T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

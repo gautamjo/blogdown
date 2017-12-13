@@ -49,7 +49,7 @@ library(tidyverse) library(plotly) library(formattable) library(DT) library(RCol
       <pubDate>Thu, 05 May 2016 21:48:51 -0700</pubDate>
       
       <guid>https://gigaelectron.github.io/blogdown/about/</guid>
-      <description>Hello there! Welcome to my little blog! My name is Gautam Joshi. I am a copywriter, autodidactic programmer and an aspiring data scientist. I am a progressive and proactive person by nature who believes in the concept of lifelong learning. This self motivation and positive outlook towards life keeps me ever curious about seeking for answers. And my writing, programming and data science skills allow me to express myself, solve problems and tell stories as best as I can.</description>
+      <description>Hello there! Welcome to my little blog! My name is Gautam Joshi. I am a copywriter, autodidactic programmer and an aspiring data scientist. These skills allow me to express myself, solve problems and tell stories as best as I can. I am a progressive and proactive person who believes in the concept of lifelong learning. This self motivation and positive outlook keeps me ever curious about seeking for answers. On this blog you will find projects that I have mostly attempted for pleasure and practice.</description>
     </item>
     
   </channel>

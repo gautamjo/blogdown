@@ -2,47 +2,38 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on Hello there!</title>
-    <link>/blogdown/categories/</link>
+    <link>https://gigaelectron.github.io/blogdown/categories/</link>
     <description>Recent content in Categories on Hello there!</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     
-	<atom:link href="/blogdown/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://gigaelectron.github.io/blogdown/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>D3.js</title>
-      <link>/blogdown/categories/d3.js/</link>
-      <pubDate>Wed, 13 Dec 2017 00:00:00 +0000</pubDate>
+      <link>https://gigaelectron.github.io/blogdown/categories/d3.js/</link>
+      <pubDate>Tue, 12 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blogdown/categories/d3.js/</guid>
+      <guid>https://gigaelectron.github.io/blogdown/categories/d3.js/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Data Science</title>
-      <link>/blogdown/categories/data-science/</link>
+      <link>https://gigaelectron.github.io/blogdown/categories/data-science/</link>
       <pubDate>Thu, 05 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blogdown/categories/data-science/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Data Visualization</title>
-      <link>/blogdown/categories/data-visualization/</link>
-      <pubDate>Wed, 13 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/blogdown/categories/data-visualization/</guid>
+      <guid>https://gigaelectron.github.io/blogdown/categories/data-science/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Exploratory Data Analysis</title>
-      <link>/blogdown/categories/exploratory-data-analysis/</link>
+      <link>https://gigaelectron.github.io/blogdown/categories/exploratory-data-analysis/</link>
       <pubDate>Tue, 12 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blogdown/categories/exploratory-data-analysis/</guid>
+      <guid>https://gigaelectron.github.io/blogdown/categories/exploratory-data-analysis/</guid>
       <description></description>
     </item>
     

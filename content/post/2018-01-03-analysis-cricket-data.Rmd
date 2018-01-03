@@ -100,7 +100,7 @@ Let me briefly describe the features available in the data set:
 <li> Match Date: Contains date on which the match was played </li>  
 </ul>  
   
-I am from India so I was only interested in exploring data related to the Indian Cricket Team. I created a new data frame with only Team India data in it. Below is a one line code that allowed to do so.
+I am from India so I was only interested in exploring data related to the Indian Cricket Team. I created a new data frame with only Team India data in it. Below is a one line code that allowed me to do so.
 
 
 ```{r echo=T}
@@ -439,7 +439,7 @@ The top five countries with which India has played most of their matches are:
 
 England, South Africa, Zimbabwe all have played more 60 ODI's against India. 
 
-The grouped chart subplot below display India's Win and Loss numbers in ODI's against all the teams at home or away. Below the plots are two data tables displaying the same information except countries with less than 10 matches are excluded from the table. 
+The grouped chart subplot below displays India's Win and Loss numbers in ODI's against all teams at home or away. Below the plots are two data tables displaying the same information except countries with less than 10 matches are excluded from the table. 
 
 ```{r fig.width=9, fig.height=5, fig.align="center"}
 awayODI <- crik_india %>%

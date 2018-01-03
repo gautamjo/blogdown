@@ -6,10 +6,19 @@
     <description>Recent content in Exploratory Data Analysis on Hello there!</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 12 Dec 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 03 Jan 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://gigaelectron.github.io/blogdown/categories/exploratory-data-analysis/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Cricket Data Analysis</title>
+      <link>https://gigaelectron.github.io/blogdown/2018/01/03/analysis-cricket-data/</link>
+      <pubDate>Wed, 03 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://gigaelectron.github.io/blogdown/2018/01/03/analysis-cricket-data/</guid>
+      <description>Being a fan of both cricket and cricket statistics, I thought why not explore a cricket related data set this time. So without any dilly-dally, I logged on straight to kaggle and got myself a data set maintained by Jalaz Kumar. If you wish to view or download it for your own use here is the link to do so.</description>
+    </item>
     
     <item>
       <title>US flight cancellations in 2008</title>

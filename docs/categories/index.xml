@@ -11,6 +11,15 @@
     
     
     <item>
+      <title>Cricket</title>
+      <link>https://gigaelectron.github.io/blogdown/categories/cricket/</link>
+      <pubDate>Wed, 03 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://gigaelectron.github.io/blogdown/categories/cricket/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>D3.js</title>
       <link>https://gigaelectron.github.io/blogdown/categories/d3.js/</link>
       <pubDate>Tue, 12 Dec 2017 00:00:00 +0000</pubDate>
@@ -29,11 +38,29 @@
     </item>
     
     <item>
+      <title>Dygraph</title>
+      <link>https://gigaelectron.github.io/blogdown/categories/dygraph/</link>
+      <pubDate>Wed, 03 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://gigaelectron.github.io/blogdown/categories/dygraph/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Exploratory Data Analysis</title>
       <link>https://gigaelectron.github.io/blogdown/categories/exploratory-data-analysis/</link>
-      <pubDate>Tue, 12 Dec 2017 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 03 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>https://gigaelectron.github.io/blogdown/categories/exploratory-data-analysis/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Plotly</title>
+      <link>https://gigaelectron.github.io/blogdown/categories/plotly/</link>
+      <pubDate>Wed, 03 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://gigaelectron.github.io/blogdown/categories/plotly/</guid>
       <description></description>
     </item>
     

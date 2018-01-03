@@ -1,0 +1,966 @@
+---
+title: Cricket Data Analysis
+author: Gautam Joshi
+date: '2018-01-03'
+slug: analysis-cricket-data
+categories:
+  - Exploratory Data Analysis
+  - Cricket
+  - Dygraph
+  - Plotly
+tags:
+  - data science
+  - cricket
+  - dygraph
+  - sports analysis
+  - EDA
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = F, message = F)
+```
+
+
+
+```{r}
+# load libraries
+library(tidyverse)
+library(formattable)
+library(DT)
+library(lubridate)
+library(data.table)
+library(plotly)
+library(dygraphs)
+library(RColorBrewer)
+```
+
+
+
+```{r}
+# set directory
+setwd("/Users/gautamjoshi/Desktop/R_std/r_basics/")
+```
+
+
+
+```{r}
+# load data
+crik_data <- read_csv("originalDataset.csv")
+```
+
+
+
+```{r}
+#str(crik_data)
+```
+
+
+
+```{r}
+#d <- dim(crik_data)
+
+#cat("Number of rows:", d[1], "\n")
+#cat("Number of columns:", d[2])
+```
+
+
+
+```{r}
+#var_type <- split(names(crik_data), sapply(crik_data, function(x) 
+  #paste(class(x), collapse = " ")))
+#var_type
+```
+
+
+Being a fan of both cricket and cricket statistics, I thought why not explore a cricket related data set this time. So without any dilly-dally, I logged on straight to <a href = "https://www.kaggle.com">kaggle</a> and got myself a data set maintained by Jalaz Kumar. If you wish to view or download it for your own use <a href="https://www.kaggle.com/jaykay12/odi-cricket-matches-19712017/data" target = "_blank">here</a> is the link to do so. In its raw form the data set contained data of 3932 One Day International matches spread over 7 features. Here is a sample view of the raw data:
+
+
+```{r}
+crik_data %>%
+  head(3) %>%
+  datatable()
+```
+
+
+Let me briefly describe the features available in the data set:
+
+<ul>
+<li> Scorecard: Contains an index </li>
+
+<li> Team 1: Contains name of the host Team </li>
+
+<li> Team 2: Contains name of the visiting Team </li>
+
+<li> Winner: Contains name of the winning team </li>
+
+<li> Margin: Contains margin by which a team won. It is either in number of wickets or number of runs </li>
+
+<li> Ground: Contains name of the ground on which the game was played </li>
+
+<li> Match Date: Contains date on which the match was played </li>  
+</ul>  
+  
+I am from India so I was only interested in exploring data related to the Indian Cricket Team. I created a new data frame with only Team India data in it. Below is a one line code that allowed to do so.
+
+
+```{r echo=T}
+crik_india <- crik_data[crik_data$`Team 1`=="India" | 
+                          crik_data$`Team 2` == "India",]
+```
+
+
+I removed the <code>Scorecard</code> feature from the data frame as it was just an index. With the 6 remaining features this was how the sample data frame looked. 
+
+
+```{r}
+crik_india[2:length(crik_india)] %>%
+  head(3) %>%
+  datatable()
+```
+
+
+In total, Team India data contained 930 matches dating back to as early as Jul 1974 till as recent as Oct 2017. Based on this data, these were the six main questions I focused on answering:
+
+<ul>
+<li> What is India's total Win/Loss/Tie percentage? </li>
+<li> What is India's Win/Loss/Tie percentage in away and home matches? </li>
+<li> How many matches has India played against different ICC teams? </li>
+<li> How many matches India has won or lost against different teams? </li>
+<li> Which are the home and away grounds where India has played most number of matches? </li>
+<li> What has been the average Indian win or loss by Runs per year? </li>
+</ul>  
+
+The data alone however wasn't enough. I had to do a bit of feature engineering and data wrangling to get the anwsers I was seeking. Below is a step by step process of how I cleaned some of the data and created a couple of features named <code>Ind Win Loss</code> and <code> Home Away </code>.
+
+```{r echo=T}
+# replace commas with empty space
+crik_india$`Match Date` <- gsub(",", "", crik_india$`Match Date`)
+```
+
+
+```{r echo=T}
+# fix multiple dates in an entry
+crik_india$`Match Date`[crik_india$`Match Date` == "Jul 15-16 1974"] <- "Jul 16 1974"
+crik_india$`Match Date`[crik_india$`Match Date` == "Jun 16-18 1979"] <- "Jun 18 1979"
+crik_india$`Match Date`[crik_india$`Match Date` == "Jun 9-10 1983"] <- "Jun 10 1983"
+```
+
+
+```{r echo=T}
+# replace empty space with hyphen
+crik_india$`Match Date` <- gsub(" ", "-", crik_india$`Match Date`)
+```
+
+
+```{r echo=T}
+# converting strings to date and extract year from it
+crik_india$`Match Date` <- year(as.Date(crik_india$`Match Date`, 
+                                  format = "%B-%d-%Y"))
+```
+
+
+
+```{r echo=T}
+# creating a new categorical field named `Ind Win Loss`
+# Win where India wins or Loss where India losses else Tie if there was no result
+crik_india$`Ind Win Loss` <- ifelse(crik_india$Winner == "India", 
+                                    "Win", 
+                                    "Loss") 
+crik_india$`Ind Win Loss`[crik_india$Winner == "no result"] <- "Tie"
+```
+
+
+
+```{r echo=T}
+# creating a vector of string with names of home grounds
+home_grounds <- c("Kolkata", "Bengaluru", "Delhi", "Mumbai", "Nagpur", 
+                  "Ahmedabad", "Cuttack", "Kanpur", "Mohali", "Rajkot", 
+                  "Chennai", "Indore", "Jaipur", "Pune", "Guwahati", 
+                  "Gwalior", "Hyderabad (Deccan)","Jamshedpur", "Kochi", 
+                  "Visakhapatnam", "Faridabad", "Chandigarh", "Ranchi", 
+                  "Dharamsala", "Amritsar", "Jalandhar", "Jodhpur", 
+                  "New Delhi", "Srinagar", "Thiruvananthapuram", "Mumbai (BS)", 
+                  "Vijayawada", "Vadodara")
+
+# creating a new features feature named `Home Away` containing either Home
+# for home grounds or Away for away grounds
+crik_india$`Home Away` <- ifelse(crik_india$Ground %in% home_grounds, 
+                                 "Home", 
+                                 "Away")
+```
+
+
+
+```{r}
+crik_india <- crik_india[2:length(crik_india)]
+```
+
+
+```{r}
+# using data.table library to extract india win/loss by runs
+df_runs <- crik_india[crik_india$Margin %like% "runs$",]
+
+```
+
+
+
+```{r}
+# extracting india win/loss by wickets
+df_wickets <- crik_india[crik_india$Margin %like% "wickets$",]
+```
+
+
+This was how the new data frame looked after cleaning up and adding a couple of new features.
+
+
+```{r}
+crik_india %>%
+  head(3) %>%
+  datatable()
+```
+
+
+
+At this point I was ready to look for answer. I started by subplotting three pie charts that could display <span style = "color:tomato">What is India's total Win/Loss/Tie percentage?</span> and <span style = "color:tomato">What is India's Win/Loss/Tie percentage in away and home matches?</span>
+
+
+
+```{r fig.width = 8, fig.align = "center"}
+
+# set random colors
+colors <- c(sample(brewer.pal(n = 5, name = "Dark2")))
+colors2 <- c(sample(brewer.pal(n = 5, name = "Dark2")))
+colors3 <- c(sample(brewer.pal(n = 5, name = "Dark2")))
+
+# set title font
+font <- list(
+  family = "Georgia",
+  size = 12,
+  color = "grey")
+
+p1 <- crik_india %>%
+  group_by(`Ind Win Loss`) %>%
+  summarise(Count = n()) %>%
+  plot_ly(labels = ~`Ind Win Loss`, values = ~Count,
+          domain = list(x = c(0, 0.25)),
+          insidetextfont = list(color = 'Black'),
+          marker = list(colors = colors, 
+                        line = list(color = 'Black', width = .5)), 
+          opacity = 0.8) %>%
+  add_pie(hole = 0.6) %>%
+  layout(xaxis = list(showgrid = T, zeroline = F, showticklabels = F),
+         yaxis = list(showgrid = T, zeroline = F, showticklabels = F),
+         showlegend = F, 
+         margin = list(t = 50, b = 50))
+
+p2 <- crik_india %>%
+  filter(`Home Away` == "Home") %>%
+  group_by(`Ind Win Loss`) %>%
+  summarise(Count = n()) %>%
+  plot_ly(labels = ~`Ind Win Loss`, values = ~Count,
+          domain = list(x = c(0.35, 0.60)),
+          insidetextfont = list(color = 'Black'),
+          marker = list(colors = colors2, 
+                        line = list(color = 'Black', width = .5)), 
+          opacity = 0.8) %>%
+  add_pie(hole = 0.6) %>%
+  layout(xaxis = list(showgrid = T, zeroline = F, showticklabels = F),
+         yaxis = list(showgrid = T, zeroline = F, showticklabels = F),
+         showlegend = F, 
+         margin = list(t = 50, b = 50))
+
+p3 <- crik_india %>%
+  filter(`Home Away` == "Away") %>%
+  group_by(`Ind Win Loss`) %>%
+  summarise(Count = n()) %>%
+  plot_ly(labels = ~`Ind Win Loss`, values = ~Count,
+          domain = list(x = c(0.68, 0.93)),
+          insidetextfont = list(color = 'Black'),
+          marker = list(colors = colors3, 
+                        line = list(color = 'Black', width = .5)), 
+          opacity = 0.8) %>%
+  add_pie(hole = 0.6) %>%
+  layout(xaxis = list(showgrid = T, zeroline = F, showticklabels = F),
+         yaxis = list(showgrid = T, zeroline = F, showticklabels = F),
+         showlegend = F, 
+         margin = list(t = 50, b = 50))
+
+sub <- subplot(p1, p2, p3, nrows = 1) %>%
+  layout(annotations = list(
+    list(x = 0 , 
+         y = 1, 
+         text = "India Win/Loss percentage in ODI's", 
+         font = font,
+         showarrow = F, 
+         xref='paper', 
+         yref='paper'),
+    
+    list(x = 0.48 , 
+         y = 1, 
+         text = "India Win/Loss percentage in ODI's at Home",
+         font = font,
+         showarrow = F, 
+         xref='paper', 
+         yref='paper'),
+    
+    list(x = 1 , 
+         y = 1, 
+         text = "India Win/Loss percentage in ODI's Away", 
+         font = font,
+         showarrow = F, 
+         xref='paper', 
+         yref='paper')))
+sub
+```
+
+
+
+
+As we can observe, India has played 930 matches in total out of which it has won 51.2% (476), lost 44.5% (414) and tied 4.3% (40) of its matches. We can also see India's performance at home and away matches. India's performance at home is quite obviously much better with a winning percentage of 58.8% at home compared to 47.7% wins away.  
+
+I used a combination of bar chart, grouped charts and datatables to answer the next couple of questions <span style = "color:tomato"> How many matches has India played against different ICC teams? </span> and <span style = "color:tomato"> How many matches India has won or lost against different teams? </span>  
+
+
+
+```{r}
+# creating a data frame containing matches `Team 1` played with India 
+visit <- crik_india %>%
+  group_by(`Team 1`) %>%
+  summarise(Matches = n()) %>%
+  filter(`Team 1` != "India")
+
+# creating a data frame containing matches India played with `Team 2`
+host <- crik_india %>% 
+  group_by(`Team 2`) %>%
+  summarise(Matches = n()) %>%
+  filter(`Team 2` != "India")
+
+# creating a data frame that does not contain names of Teams in `Team 2`
+v <- visit[!(visit$`Team 1` %in% host$`Team 2`),]
+
+# changing name of col `Team 1` to Team
+v$Team <- v$`Team 1`
+v$`Team 1` <- NULL
+
+# creating a new data frame 
+total <- data.frame(Team = c(visit$`Team 1`[visit$`Team 1` %in% host$`Team 2`]),
+           Matches = c(visit$Matches[visit$`Team 1` %in% host$`Team 2`] + 
+                         host$Matches[host$`Team 2` %in% visit$`Team 1`]))
+
+# binding rows of total and v
+total1 <- rbind(total, v)
+
+#total2 <- total1[order(as.character(total1$Team)),]
+```
+
+
+
+```{r}
+# setting up plotly label, axis and text customizations
+f1 <- list(
+  family = "Old Standard TT, serif",
+  size = 14,
+  color = "grey"
+)
+f2 <- list(
+  family = "Old Standard TT, serif",
+  size = 10,
+  color = "black"
+)
+a <- list(
+  titlefont = f1,
+  showticklabels = T,
+  tickangle = -45,
+  tickfont = f2
+)
+a2 <- list(
+  titlefont = f1,
+  showticklabels = T,
+  tickfont = f2
+  )
+m <- list(
+  l = 50,
+  r = 50,
+  b = 100,
+  t = 100,
+  pad = 4
+)
+```
+
+
+
+```{r}
+
+# creating more than 12 colors in a palette incase I need it
+colorCount <- length(unique(total1$Team))
+getPalette <- colorRampPalette(brewer.pal(17, "Dark2"))
+
+matchesBar <- total1 %>%
+  ggplot(aes(x = as.character(Team), y = Matches, fill = Team,
+             text = paste("Team:", Team,
+                          "| ODI's:", Matches))) +
+  geom_bar(stat = "summary", 
+           color = "black", 
+           size = 0.2,
+           alpha = 0.8,
+           width = 0.7,
+           show.legend = F) +
+  xlab("ICC Cricket Teams") +
+  ylab("ODI's Against India") +
+  ggtitle("Total ODI's teams have played against India from 1974 - 2017") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(size = 6,
+                                   angle = 45),
+        axis.text.y = element_text(size = 7, 
+                                   angle = 45),
+        axis.title.x = element_text(family = "Georgia"),
+        axis.title.y =  element_text(family = "Georgia"),
+        plot.title = element_text(family = "Georgia",
+                                  hjust = 0.5,
+                                  color = "darkgrey"),
+        legend.position = "none") +
+  scale_fill_manual(values = getPalette(colorCount))
+
+ggplotly(matchesBar, tooltip = "text") %>%
+  layout(margin = list(t = 100), 
+         xaxis = a,
+         yaxis = a)
+```
+
+
+The top five countries with which India has played most of their matches are:
+<ul>
+<li>Sri Lanka, 155 ODI's</li>
+<li>Pakistan, 129 ODI's</li>
+<li>Australia, 128 ODI's</li>
+<li>West Indies, 121 ODI's</li>
+<li>New Zealand, 101 ODI's</li>
+</ul>
+
+England, South Africa, Zimbabwe all have played more 60 ODI's against India. 
+
+The grouped chart subplot below display India's Win and Loss numbers in ODI's against all the teams at home or away. Below the plots are two data tables displaying the same information except countries with less than 10 matches are excluded from the table. 
+
+```{r fig.width=9, fig.height=5, fig.align="center"}
+awayODI <- crik_india %>%
+  mutate(Team = `Team 1`) %>%
+  group_by(`Team`, `Ind Win Loss`) %>%
+  filter(`Team` != "India",
+         `Ind Win Loss` != "Tie") %>%
+   summarise(`Matches Played` = n()) %>%
+  ggplot(aes(x = Team, y = `Matches Played`, fill = `Ind Win Loss`,
+             text = paste("Team:", Team,
+                          ifelse(`Ind Win Loss` == "Win", 
+                                 "<br>India Won:", 
+                                 "<br>India Lost:"), `Matches Played`)))+
+  geom_bar(stat = "identity", 
+           position = "dodge",
+           color = "black",
+           size = 0.2,
+           alpha = 0.8,
+           show.legend = F) +
+  xlab("ICC Cricket Teams") +
+  ylab("India Win/Loss") +
+  theme_minimal() +
+  theme(axis.title.x = element_text(family = "Georgia"),
+        axis.title.y = element_text(family = "Georgia"),
+        plot.title = element_text(family = "Georgia",
+                                  color = "darkgrey",
+                                  hjust = 0.5)) +
+  scale_fill_manual(values = colors)
+
+aodi <- ggplotly(awayODI, tooltip = "text") %>%
+  layout(margin = list( t = 0,
+                        b = 100,
+                        r = 50,
+                        l = 50),
+         xaxis = a2,
+         yaxis = a,
+         legend = list(orientation = "h", size = 4,
+                       bgcolor = "#E2E2E2",
+                       bordercolor = "darkgrey",
+                       borderwidth = 1,
+                       x = 0.70,
+                       y = -0.25))
+
+homeODI <- crik_india %>%
+  mutate(Team = `Team 2`) %>%
+  group_by(`Team`, `Ind Win Loss`) %>%
+  filter(`Team` != "India",
+         `Ind Win Loss` != "Tie") %>%
+   summarise(`Matches Played` = n()) %>%
+  ggplot(aes(x = Team, y = `Matches Played`, fill = `Ind Win Loss`,
+             text = paste("Team:", Team,
+                          ifelse(`Ind Win Loss` == "Win", 
+                                 "<br>India Won:", 
+                                 "<br>India Lost:"), `Matches Played`)))+
+  geom_bar(stat = "identity", 
+           position = "dodge",
+           color = "black",
+           size = 0.2,
+           alpha = 0.8,
+           show.legend = F) +
+  xlab("ICC Cricket Teams") +
+  ylab("India Win/Loss") +
+  theme_minimal() +
+  theme(axis.title.x = element_text(family = "Georgia"),
+        axis.title.y = element_text(family = "Georgia"),
+        plot.title = element_text(family = "Georgia",
+                                  color = "darkgrey",
+                                  hjust = 0.5)) +
+  scale_fill_manual(values = colors2)
+
+hodi <- ggplotly(homeODI, tooltip = "text") %>%
+  layout(margin = m,
+         xaxis = a2,
+         yaxis = a,
+         legend = list(orientation = "h", size = 4,
+                       bgcolor = "#E2E2E2",
+                       bordercolor = "darkgrey",
+                       borderwidth = 1,
+                       x = 0.70,
+                       y = -0.25))
+
+subplot(aodi, hodi, nrows = 2, 
+        shareY = TRUE,
+        heights = c(0.5, 0.5), margin = 0.11) %>%
+  layout(annotations = list(list(x = 0.5 , 
+                                 y = 1.13, 
+                                 font = list(family = "Times",
+                                             color = "darkgrey"),
+                                 align = "center",
+                                 text = "India Win/Loss Away", 
+                                 showarrow = F, 
+                                 xref='paper', 
+                                 yref='paper'),
+                            
+                            list(text = "India Win/Loss at Home", 
+                                 font = list(family = "Times",
+                                             color = "darkgrey"),
+                                 showarrow = F, 
+                                 xref='paper', 
+                                 yref='paper',
+                                 align = "center")))
+```
+
+
+```{r}
+df <- crik_india %>%
+  filter(`Ind Win Loss` != "Tie") %>%
+  mutate(Teams = `Team 2`,
+         Win = `Ind Win Loss` == "Win",
+         Loss = `Ind Win Loss` == "Loss") %>%
+  group_by(`Teams`) %>%
+  summarise(`Home Matches Played` = n(),
+            `Home Win` = sum(Win),
+            `Home Loss` = sum(Loss),
+            `Home Win Proportion` = round(sum(Win)/`Home Matches Played`, 2),
+            `Home Loss Proportion` = round(sum(Loss)/`Home Matches Played`, 2)) %>%
+  filter(Teams != "India",
+         `Home Matches Played` > 10)
+```
+
+
+```{r}
+df2 <- crik_india %>% 
+  filter(`Ind Win Loss` != "Tie") %>%
+  mutate(Teams = `Team 1`,
+         Win = `Ind Win Loss` == "Win",
+         Loss = `Ind Win Loss` == "Loss") %>%
+  group_by(`Teams`) %>%
+  summarise(`Away Matches Played` = n(),
+            `Away Win` = sum(Win),
+            `Away Loss` = sum(Loss),
+            `Away Win Proportion` = round(sum(Win)/`Away Matches Played`, 2),
+            `Away Loss Proportion` = round(sum(Loss)/`Away Matches Played`, 2)) %>%
+  filter(Teams != "India",
+         `Away Matches Played` > 10)
+
+df2 %>%
+  formattable(list(`Away Win Proportion` = color_tile("transparent", "pink"),
+                   `Away Loss Proportion` = color_tile("transparent", "gold"),
+                   `Away Matches Played` = color_bar("tomato"),
+                   `Away Win` = color_bar("skyblue"),
+                   `Away Loss` = color_bar("orange"))) %>%
+  as.datatable(options = list(pageLength=10))
+```
+
+```{r}
+df %>%
+  formattable(list(`Home Win Proportion` = color_tile("transparent", "skyblue"),
+                   `Home Loss Proportion` = color_tile("transparent", "orange"),
+                   `Home Matches Played` = color_bar("lightgreen"),
+                   `Home Win` = color_bar("tomato"),
+                   `Home Loss` = color_bar("pink"))) %>%
+  as.datatable(options = list(pageLength=10))
+```
+
+
+India's peformance against arch rival Pakistan and Australia hasn't been great. Otherwise, India has done pretty well against other teams. In general, looking at the plots and the tables we can once again clearly observe that India's performance in home conditions is much better than performance in away conditions. 
+
+
+<span style = "color:tomato">Which are the home and away grounds where India has played most number of matches?</span> was the next question I was looking to answer. There were in total 119 grounds on which India had played. These many data points on a bar plot would make it look messy and incohorent, I thought. Therefore, I decided to subplot two bar charts displaying India's Win/Loss number on top ten home and top ten away grounds separately.
+
+```{r}
+# top 10 away grounds
+a10 <- crik_india %>%
+  filter(`Home Away` == "Away") %>%
+  group_by(Ground) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  head(10)
+
+# top 10 home grounds
+h10 <- crik_india %>%
+  filter(`Home Away` == "Home") %>%
+  group_by(Ground) %>%
+  summarise(Count = n()) %>%
+  arrange(desc(Count)) %>%
+  head(10)
+
+# top 10 away and home ground vectors
+away10 <- c(a10$Ground)
+home10 <- c(h10$Ground)
+```
+
+
+```{r fig.height=5, fig.align="center"}
+hg <- crik_india %>%
+  filter(Ground %in% home10) %>%
+  group_by(Ground, `Ind Win Loss`) %>%
+  count() %>%
+  filter(`Ind Win Loss` != "Tie") %>%
+  ggplot(aes(x = Ground, y = n, 
+             fill = `Ind Win Loss`,
+             text = paste("Ground:", Ground,
+                          ifelse(`Ind Win Loss` == "Win", "| India Won:",
+                                 "| India Lost:"), n))) +
+  geom_bar(stat = "identity", 
+           position = "dodge",
+           color = "black",
+           size = 0.2,
+           alpha = 0.8,
+           width = 0.7,
+           show.legend = F) +
+  theme_minimal() +
+  ylab("Matches Won/Lost") +
+  theme_minimal()+
+  theme(axis.title.x = element_text(family = "Georgia"),
+        axis.title.y = element_text(family = "Georgia"),
+        plot.title = element_text(family = "Georgia",
+                                  color = "darkgrey",
+                                  hjust = 0.5)) +
+  scale_fill_manual(values = colors) 
+
+hg1 <- ggplotly(hg, tooltip = "text") %>%
+  layout(margin = m,
+         xaxis = a2,
+         yaxis = a,
+         legend = list(orientation = "h", size = 4,
+                       bgcolor = "#E2E2E2",
+                       bordercolor = "darkgrey",
+                       borderwidth = 1,
+                       x = 0.70,
+                       y = -0.18))
+
+ag <- crik_india %>%
+  filter(Ground %in% away10) %>%
+  group_by(Ground, `Ind Win Loss`) %>%
+  count() %>%
+  filter(`Ind Win Loss` != "Tie") %>%
+  ggplot(aes(x = Ground, y = n, 
+             fill = `Ind Win Loss`,
+             text = paste("Ground:", Ground,
+                          ifelse(`Ind Win Loss` == "Win", "| India Won:",
+                                 "| India Lost:"), n))) +
+  geom_bar(stat = "identity", 
+           position = "dodge",
+           color = "black",
+           size = 0.2,
+           alpha = 0.8,
+           width = 0.7,
+           show.legend = F) +
+  theme_minimal() +
+  ylab("Matches Won/Lost") +
+  theme_minimal()+
+  theme(axis.title.x = element_text(family = "Georgia"),
+        axis.title.y = element_text(family = "Georgia"),
+        plot.title = element_text(family = "Georgia",
+                                  color = "darkgrey",
+                                  hjust = 0.5)) +
+  scale_fill_manual(values = colors2)
+  
+ag1 <- ggplotly(ag, tooltip = "text") %>%
+  layout(margin = m,
+         xaxis = a2,
+         yaxis = a,
+         legend = list(orientation = "h", size = 4,
+                       bgcolor = "#E2E2E2",
+                       bordercolor = "darkgrey",
+                       borderwidth = 1,
+                       x = 0.70,
+                       y = -0.18))
+
+subplot(hg1, ag1, nrows = 2, shareY = T,
+        heights = c(0.5, 0.5), margin = 0.11) %>%
+  layout(annotations = list(list(x = 0.5 , 
+                                 y = 1.13, 
+                                 font = list(family = "Times",
+                                             color = "darkgrey"),
+                                 align = "center",
+                                 text = "India Win/Loss on Top Ten Home Grounds", 
+                                 showarrow = F, 
+                                 xref='paper', 
+                                 yref='paper'),
+                            
+                            list(text = "India Win/Loss on Top Ten Away Grounds", 
+                                 font = list(family = "Times",
+                                             color = "darkgrey"),
+                                 showarrow = F, 
+                                 xref='paper', 
+                                 yref='paper',
+                                 align = "center")))
+```
+
+
+
+Again, we can observe India's impressive record on home pitches with one exception of Ahmedabad where India has lost more matches than it has won. On away grounds however, the story is a bit different. Specially, Austrialian pitches (Brisbane, Melbourne and Sydney) seem to trouble team India quite a bit.  
+
+
+It was time to answer the last question on the list <span style = "color:tomato">What has been the average Indian win or loss by Runs per year?</span> Below is a dygraph that shows India's average win/loss by runs per year since 1982-2017. 
+
+```{r}
+df_runs$Margin <- parse_number(df_runs$Margin)
+df_runs$`Win Loss` <- ifelse(df_runs$Winner == "India", 
+                                    "Win", 
+                                    "Loss")
+runs <- df_runs %>%
+  select(Margin, `Win Loss`, `Match Date`) %>%
+  filter(`Win Loss` == "Win") %>%
+  group_by(`Match Date`) %>%
+  summarise(`Avg Runs Win` = round(mean(Margin, na.rm = T)))
+
+runs_lost <- df_runs %>%
+  select(Margin, `Win Loss`, `Match Date`) %>%
+  filter(`Win Loss` == "Loss") %>%
+  group_by(`Match Date`) %>%
+  summarise(`Avg Runs Loss` = round(mean(Margin, na.rm = T)))
+
+totalRuns <- merge(runs, runs_lost)
+```
+
+
+
+
+```{r fig.height=3, fig.width=8, fig.align="center"}
+dygraph(totalRuns, main = "Indian Win/Loss in Average Runs Per Year from 1983 - 2017",
+          xlab = "Years", ylab = "Average Runs") %>%
+  dySeries("Avg Runs Win", label = "Win By") %>%
+  dySeries("Avg Runs Loss", label = "Loss By") %>%
+   dyLegend(show = "follow") %>%
+  dyOptions(colors = brewer.pal(2, "Dark2"),
+            includeZero = TRUE,
+            axisLineColor = "white",
+            gridLineColor = "lightgrey") %>%
+  dyRangeSelector(height = 40,
+                  dateWindow = c("1990", "2010")) %>%
+  dyCSS("styles.css")
+```
+
+
+```{r}
+df_wickets$Margin <- parse_number(df_wickets$Margin)
+df_wickets$`Win Loss` <- ifelse(df_wickets$Winner == "India", 
+                                    "Win", 
+                                    "Loss")
+wickets <- df_wickets %>%
+  select(Margin, `Win Loss`, `Match Date`) %>%
+  filter(`Win Loss` == "Win") %>%
+  group_by(`Match Date`) %>%
+  summarise(`Avg Wickets Win` = round(mean(Margin, na.rm = T)))
+
+wickets_lost <- df_wickets %>%
+  select(Margin, `Win Loss`, `Match Date`) %>%
+  filter(`Win Loss` == "Loss") %>%
+  group_by(`Match Date`) %>%
+  summarise(`Avg Wickets Loss` = round(mean(Margin, na.rm = T)))
+
+totalWickets <- merge(wickets, wickets_lost)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

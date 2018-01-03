@@ -8,6 +8,11 @@
   </url>
   
   <url>
+    <loc>https://gigaelectron.github.io/blogdown/2018/01/03/analysis-cricket-data/</loc>
+    <lastmod>2018-01-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://gigaelectron.github.io/blogdown/2017/12/12/us-flight-cancellations-in-2008/</loc>
     <lastmod>2017-12-12T00:00:00+00:00</lastmod>
   </url>
@@ -28,6 +33,18 @@
   </url>
   
   <url>
+    <loc>https://gigaelectron.github.io/blogdown/tags/cricket/</loc>
+    <lastmod>2018-01-03T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://gigaelectron.github.io/blogdown/categories/cricket/</loc>
+    <lastmod>2018-01-03T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://gigaelectron.github.io/blogdown/tags/d3.js/</loc>
     <lastmod>2017-12-12T00:00:00+00:00</lastmod>
     <priority>0</priority>
@@ -41,7 +58,7 @@
   
   <url>
     <loc>https://gigaelectron.github.io/blogdown/tags/data-science/</loc>
-    <lastmod>2017-11-14T00:00:00+00:00</lastmod>
+    <lastmod>2018-01-03T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -52,14 +69,26 @@
   </url>
   
   <url>
+    <loc>https://gigaelectron.github.io/blogdown/tags/dygraph/</loc>
+    <lastmod>2018-01-03T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://gigaelectron.github.io/blogdown/categories/dygraph/</loc>
+    <lastmod>2018-01-03T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://gigaelectron.github.io/blogdown/tags/eda/</loc>
-    <lastmod>2017-12-12T00:00:00+00:00</lastmod>
+    <lastmod>2018-01-03T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://gigaelectron.github.io/blogdown/categories/exploratory-data-analysis/</loc>
-    <lastmod>2017-12-12T00:00:00+00:00</lastmod>
+    <lastmod>2018-01-03T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -76,14 +105,26 @@
   </url>
   
   <url>
+    <loc>https://gigaelectron.github.io/blogdown/categories/plotly/</loc>
+    <lastmod>2018-01-03T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://gigaelectron.github.io/blogdown/post/</loc>
     <lastmod>2017-10-05T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
+    <loc>https://gigaelectron.github.io/blogdown/tags/sports-analysis/</loc>
+    <lastmod>2018-01-03T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://gigaelectron.github.io/blogdown/tags/</loc>
-    <lastmod>2017-12-12T00:00:00+00:00</lastmod>
+    <lastmod>2018-01-03T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

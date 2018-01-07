@@ -33,20 +33,14 @@
   </url>
   
   <url>
-    <loc>https://gigaelectron.github.io/blogdown/tags/cricket/</loc>
-    <lastmod>2018-01-03T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>https://gigaelectron.github.io/blogdown/categories/cricket/</loc>
     <lastmod>2018-01-03T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://gigaelectron.github.io/blogdown/tags/d3.js/</loc>
-    <lastmod>2017-12-12T00:00:00+00:00</lastmod>
+    <loc>https://gigaelectron.github.io/blogdown/tags/cricket/</loc>
+    <lastmod>2018-01-03T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -57,8 +51,8 @@
   </url>
   
   <url>
-    <loc>https://gigaelectron.github.io/blogdown/tags/data-science/</loc>
-    <lastmod>2018-01-03T00:00:00+00:00</lastmod>
+    <loc>https://gigaelectron.github.io/blogdown/tags/d3.js/</loc>
+    <lastmod>2017-12-12T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -69,13 +63,19 @@
   </url>
   
   <url>
-    <loc>https://gigaelectron.github.io/blogdown/tags/dygraph/</loc>
+    <loc>https://gigaelectron.github.io/blogdown/tags/data-science/</loc>
     <lastmod>2018-01-03T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://gigaelectron.github.io/blogdown/categories/dygraph/</loc>
+    <lastmod>2018-01-03T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://gigaelectron.github.io/blogdown/tags/dygraph/</loc>
     <lastmod>2018-01-03T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>

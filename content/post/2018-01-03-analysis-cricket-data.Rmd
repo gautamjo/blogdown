@@ -78,7 +78,13 @@ Being a fan of both cricket and cricket statistics, I thought why not explore a 
 ```{r}
 crik_data %>%
   head(3) %>%
-  datatable()
+  datatable(list(autoWidth = TRUE,
+                 dom = "t",
+                 initComplete = JS(
+    "function(settings, json) {",
+    "$(this.api().table().header()).css({'background-color': '#283747', 'color': '#fff'});",
+    "}")
+                 ))
 ```
 
 
@@ -115,7 +121,13 @@ I removed the <code>Scorecard</code> feature from the data frame as it was just 
 ```{r}
 crik_india[2:length(crik_india)] %>%
   head(3) %>%
-  datatable()
+  datatable(list(autoWidth = TRUE,
+                 dom = "t",
+                 initComplete = JS(
+    "function(settings, json) {",
+    "$(this.api().table().header()).css({'background-color': '#283747', 'color': '#fff'});",
+    "}")
+                 ))
 ```
 
 
@@ -216,7 +228,13 @@ This was how the new data frame looked after cleaning up and adding a couple of 
 ```{r}
 crik_india %>%
   head(3) %>%
-  datatable()
+  datatable(list(autoWidth = TRUE,
+                 dom = "t",
+                 initComplete = JS(
+    "function(settings, json) {",
+    "$(this.api().table().header()).css({'background-color': '#283747', 'color': '#fff'});",
+    "}")
+                 ))
 ```
 
 
@@ -582,7 +600,13 @@ df2 %>%
                    `Away Matches Played` = color_bar("tomato"),
                    `Away Win` = color_bar("skyblue"),
                    `Away Loss` = color_bar("orange"))) %>%
-  as.datatable(options = list(pageLength=10))
+  as.datatable(options = list(autoWidth = TRUE,
+                 dom = "t",
+                 initComplete = JS(
+    "function(settings, json) {",
+    "$(this.api().table().header()).css({'background-color': '#283747', 'color': '#fff'});",
+    "}")
+                 ))
 ```
 
 ```{r}
@@ -592,7 +616,13 @@ df %>%
                    `Home Matches Played` = color_bar("lightgreen"),
                    `Home Win` = color_bar("tomato"),
                    `Home Loss` = color_bar("pink"))) %>%
-  as.datatable(options = list(pageLength=10))
+  as.datatable(options = list(autoWidth = TRUE,
+                 dom = "t",
+                 initComplete = JS(
+    "function(settings, json) {",
+    "$(this.api().table().header()).css({'background-color': '#283747', 'color': '#fff'});",
+    "}")
+                 ))
 ```
 
 

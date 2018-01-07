@@ -1,5 +1,5 @@
 ---
-title: Cricket Data Analysis
+title: Team India Cricket Data Analysis
 author: Gautam Joshi
 date: '2018-01-03'
 slug: analysis-cricket-data
@@ -14,6 +14,8 @@ tags:
   - dygraph
   - sports analysis
   - EDA
+  - Team 
+  - India
 ---
 
 ```{r setup, include=FALSE}
